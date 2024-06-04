@@ -1,7 +1,11 @@
 Wednesday, Thrusday, Friday, Mondays (10: 00 - 6: 00) - Worked on the code, watched YT videos on the similarity between two texts.
 
 Tuesday
-11:10 pm - updated the code. 
+10-11:10 pm - updated the code. 
 12:38 pm - Talking to juvan about the github.
 01:26 pm - Finished Talking with Juvan, and prof li.
 02:00 pm - finished talking to juvan about the questions, and working on the code. 
+03:18 pm - updated the code
+04:30 pm - updated the code, added the summarize function for the summary of the patient's input
+05:10 pm - added the try except error handling method
+06:22 pm - tried my code with the Javaun's question and answers, works fine.

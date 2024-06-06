@@ -50,36 +50,56 @@ med_supp_ques = {
     "Have you experienced any side effects or difficulties with your current medications?" : "Details about any adverse reactions, side effects, or difficulties experienced with the prescribed medications, including symptoms such as nausea, vomiting, diarrhea, dizziness, rash, or changes in laboratory parameters. Pay particular attention to potential complications related to kidney function, such as electrolyte imbalances, hypotension, or medication accumulation due to impaired renal clearance."
 
 }
+
 responses = ''
 
-def check_information(response, conditions):
+def med_history_information(response, conditions):
     global responses
-    query = f'We are checking up the patient who have kidney failure. The expected answer is {conditions}. So, based on the {response}, do you it is important to for us to note these answers for the doctor? If you think it is above minor thing then only note and please begin with "Yes".'
+    query = f'We are checking up the medical history of the patient who have kidney failure. The expected answer is {conditions}. So, based on the {response}, do you think it is important for us to note these answers for the doctor? If you think it is above minor thing then only note and please begin with "Yes".'
     try:
         convo.send_message(query)
         answer = convo.last.text
         print(answer)
         if "yes" in answer.lower():
             responses += response
-            return
+            return True
         else:
-            print('Moving to another section')
+            return False
     except ResourceExhausted:
         print("API quota exceeded in checking_info. Please try again later.")
         return
 
-
-def medical_question():
+def med_supp_information(response, conditions):
+    global responses
+    query = f'We are checking up the medications and supplements of the patient who have kidney failure. The expected answer is {conditions}. So, based on the {response}, do you think it is important for us to note these answers for the doctor? If you think it is above than normal patient thing then only note and please begin with "Yes".'
+    try:
+        convo.send_message(query)
+        answer = convo.last.text
+        print(answer)
+        if "yes" in answer.lower():
+            responses += response
+            return True
+        else:
+            return False
+    except ResourceExhausted:
+        print("API quota exceeded in checking_info. Please try again later.")
+        return
+    
+def medical_history_question():
     for question, conditions in med_ques.items():
         print(f'Question: {question}')
         response = input('Your Response: ')
-        check_information(response, conditions)
+        answer = med_history_information(response, conditions)
+        if not answer:
+            break
 
 def medications_and_supplements():
     for question, conditions in med_supp_ques.items():
         print(f'Question: {question}')
         response = input('Your response: ')
-        check_information(response, conditions)
+        answer = med_supp_information(response, conditions)
+        if not answer:
+            break
 
 def summarize_responses():
     global responses
@@ -91,6 +111,6 @@ def summarize_responses():
         print("API quota exceeded in summary. Please try again later.")
 
 
-medical_question()
+medical_history_question()
 medications_and_supplements()
 summarize_responses()

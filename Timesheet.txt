@@ -16,4 +16,7 @@ Wednesday
 06:23 pm - learning about the flask 
 06:50 pm - working on Medications and Supplements
 07:25 pm - created Medications and Supplements function
-09:12 pm - complete working on medical history and medications and Supplements, tried Javaun's answers, works fine
+09:12 pm - complete working on medical history and medications and Supplements, tried Javaun's answers, works fine.
+
+Thrusday
+11:42 am - added med_supp_info function

@@ -1,7 +1,7 @@
 Wednesday, Thrusday, Friday, Mondays (10: 00 - 6: 00) - Worked on the code, watched YT videos on the similarity between two texts.
 
 Tuesday
-10-11:10 pm - updated the code. 
+10-11:10 am - updated the code. 
 12:38 pm - Talking to juvan about the github.
 01:26 pm - Finished Talking with Juvan, and prof li.
 02:00 pm - finished talking to juvan about the questions, and working on the code. 
@@ -9,3 +9,11 @@ Tuesday
 04:30 pm - updated the code, added the summarize function for the summary of the patient's input
 05:10 pm - added the try except error handling method
 06:22 pm - tried my code with the Javaun's question and answers, works fine.
+
+Wednesday
+12:30 pm - updated the code
+03:30 pm - learning about the javascript
+06:23 pm - learning about the flask 
+06:50 pm - working on Medications and Supplements
+07:25 pm - created Medications and Supplements function
+09:12 pm - complete working on medical history and medications and Supplements, tried Javaun's answers, works fine

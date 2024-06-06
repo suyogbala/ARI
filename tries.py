@@ -55,12 +55,12 @@ responses = ''
 
 def med_history_information(response, conditions):
     global responses
-    query = f'We are checking up the medical history of the patient who have kidney failure. The expected answer is {conditions}. So, based on the {response}, do you think it is important for us to note these answers for the doctor? If you think it is above minor thing then only note and please begin with "Yes".'
+    query = f'We are checking up the medical history of the patient who have kidney failure. The expected answer is {conditions}. "Based on the response {response}, do you think this information is important for a patient with kidney failure? Please identify the relevant conditions or details.'
     try:
         convo.send_message(query)
         answer = convo.last.text
         print(answer)
-        if "yes" in answer.lower():
+        if 'yes' in answer.lower() or 'important' in answer.lower():
             responses += response
             return True
         else:
@@ -71,7 +71,7 @@ def med_history_information(response, conditions):
 
 def med_supp_information(response, conditions):
     global responses
-    query = f'We are checking up the medications and supplements of the patient who have kidney failure. The expected answer is {conditions}. So, based on the {response}, do you think it is important for us to note these answers for the doctor? If you think it is above than normal patient thing then only note and please begin with "Yes".'
+    query = f'We are checking up the medications and supplements of the patient who have kidney failure. The expected answer is {conditions}. Based on the response {response}, do you think this information is important for a patient with kidney failure? Please identify the relevant medications or supplements.'
     try:
         convo.send_message(query)
         answer = convo.last.text
@@ -106,10 +106,9 @@ def summarize_responses():
     print(f'Responses from the patients: {responses}')
     try:
         convo.send_message(f"Based on the {responses}, please provide me the summary of the patient's information that doctor's need to know.")
-        print(convo.last.text)
+        print(f' Summary of patients report: /n{convo.last.text}')
     except ResourceExhausted:
         print("API quota exceeded in summary. Please try again later.")
-
 
 medical_history_question()
 medications_and_supplements()

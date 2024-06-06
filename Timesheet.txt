@@ -20,3 +20,4 @@ Wednesday
 
 Thrusday
 11:42 am - added med_supp_info function
+02:08 pm - working on the AI generated followup question.

@@ -31,3 +31,6 @@ Thrusday
 Wednesday
 11:30 am - figuring out how to just ask the question
 02:37 pm - testing answer with the AI generated question
+04:20 pm - working on the code
+05:46 pm - working on the code
+07:36 pm - finished the code, AI runs well.

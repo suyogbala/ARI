@@ -27,3 +27,7 @@ Thrusday
 06:10 pm - reading the AI work on the kidney failure.
 07:30 pm - wathcing YT videos on how to feed AI with your data.
 08:00 pm - working on the code.
+
+Wednesday
+11:30 am - figuring out how to just ask the question
+02:37 pm - testing answer with the AI generated question

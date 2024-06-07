@@ -1,9 +1,7 @@
 import google.generativeai as genai
 from google.api_core.exceptions import ResourceExhausted
 
-
 genai.configure(api_key="AIzaSyBSV0XbpWUbxE0qmrTxZlqd1o2VJKpWfYA")
-
 
 generation_config = {
     "temperature": 1,
@@ -13,22 +11,10 @@ generation_config = {
 }
 
 safety_settings = [
-    {
-        "category": "HARM_CATEGORY_HARASSMENT",
-        "threshold": "BLOCK_MEDIUM_AND_ABOVE"
-    },
-    {
-        "category": "HARM_CATEGORY_HATE_SPEECH",
-        "threshold": "BLOCK_MEDIUM_AND_ABOVE"
-    },
-    {
-        "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-        "threshold": "BLOCK_MEDIUM_AND_ABOVE"
-    },
-    {
-        "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
-        "threshold": "BLOCK_MEDIUM_AND_ABOVE"
-    },
+    {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_MEDIUM_AND_ABOVE"},
+    {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_MEDIUM_AND_ABOVE"},
+    {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_MEDIUM_AND_ABOVE"},
+    {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_MEDIUM_AND_ABOVE"},
 ]
 
 model = genai.GenerativeModel(model_name="gemini-1.5-pro-latest",
@@ -37,79 +23,95 @@ model = genai.GenerativeModel(model_name="gemini-1.5-pro-latest",
 
 convo = model.start_chat(history=[])
 
-
-med_ques = {
-    "Do you have any existing medical conditions or illnesses?": "pre-existing medical conditions such as chronic kidney disease (CKD), hypertension, diabetes mellitus, or other conditions that may contribute to or result from kidney failure.",
-    "Could you please provide more details about the specific conditions you've been diagnosed with?": "Details regarding the stage of kidney failure, etiology (e.g., diabetic nephropathy, hypertensive nephrosclerosis, glomerulonephritis), presence of complications (e.g., anemia, bone disease, cardiovascular disease), and any concurrent illnesses that may impact dialysis treatment or prognosis.",
-    "Have there been any recent changes or developments in your medical history that we should be aware of?": "Updates on changes in kidney function (e.g., decline in glomerular filtration rate), development of new complications (e.g., electrolyte imbalances, fluid overload), or any significant events such as hospitalizations, infections, or vascular access issues."
+categories_info = {
+    "Medical History": [
+        "existing medical conditions such as chronic kidney disease (CKD)", 
+        "hypertension", 
+        "diabetes mellitus", 
+        "history of heart disease", 
+        "previous surgeries or hospitalizations",
+        "family history of kidney disease"
+    ],
+    "Medications and Supplements": [
+        "current prescription medications", 
+        "over-the-counter medications",
+        "vitamins or supplements", 
+        "herbal remedies", 
+        "any recent changes in medication"
+    ],
+    "Lifestyle Factors": [
+        "dietary habits", 
+        "exercise routine", 
+        "smoking history", 
+        "alcohol consumption", 
+        "stress levels"
+    ],
+    "Symptoms": [
+        "fatigue", 
+        "swelling in the legs or feet", 
+        "changes in urination", 
+        "shortness of breath", 
+        "nausea or vomiting", 
+        "itching"
+    ]
 }
 
-med_supp_ques = {
-    "Are you currently taking any medications or supplements?" : "Confirmation of current use of medications and supplements, including prescription drugs, over-the-counter medications, and dietary supplements.", 
-    "Could you please list the medications you're taking and their dosages?" : "Detailed list of all medications being taken, including dosage strength, frequency of administration, and route of administration. This includes medications for managing kidney failure (e.g., phosphate binders, erythropoiesis-stimulating agents, vitamin D analogs), as well as medications for coexisting conditions (e.g., antihypertensive agents, insulin or oral hypoglycemic agents for diabetes mellitus, medications for cardiovascular disease).", 
-    "Have you experienced any side effects or difficulties with your current medications?" : "Details about any adverse reactions, side effects, or difficulties experienced with the prescribed medications, including symptoms such as nausea, vomiting, diarrhea, dizziness, rash, or changes in laboratory parameters. Pay particular attention to potential complications related to kidney function, such as electrolyte imbalances, hypotension, or medication accumulation due to impaired renal clearance."
+responses = {category: [] for category in categories_info}
 
-}
-
-responses = ''
-
-def med_history_information(response, conditions):
-    global responses
-    query = f'We are checking up the medical history of the patient who have kidney failure. The expected answer is {conditions}. "Based on the response {response}, do you think this information is important for a patient with kidney failure? Please identify the relevant conditions or details.'
+def generate_follow_up_question(missing_info, category):
+    query = f"Based on the {category} section, what follow-up question should I ask to gather information about {missing_info}?"
     try:
         convo.send_message(query)
-        answer = convo.last.text
-        print(answer)
-        if 'yes' in answer.lower() or 'important' in answer.lower():
-            responses += response
-            return True
-        else:
-            return False
+        follow_up_question = convo.last.text
+        return follow_up_question
     except ResourceExhausted:
-        print("API quota exceeded in checking_info. Please try again later.")
-        return
+        print("API quota exceeded. Please try again later.")
+        return None
 
-def med_supp_information(response, conditions):
+def check_information(response, required_info, category):
     global responses
-    query = f'We are checking up the medications and supplements of the patient who have kidney failure. The expected answer is {conditions}. Based on the response {response}, do you think this information is important for a patient with kidney failure? Please identify the relevant medications or supplements.'
-    try:
-        convo.send_message(query)
-        answer = convo.last.text
-        print(answer)
-        if "yes" in answer.lower():
-            responses += response
-            return True
-        else:
-            return False
-    except ResourceExhausted:
-        print("API quota exceeded in checking_info. Please try again later.")
-        return
+    relevant_info = []
+    for info in required_info:
+        if info.lower() in response.lower():
+            relevant_info.append(info)
+    if relevant_info:
+        responses[category].append(response)
+    return relevant_info
+
+def ask_and_check_questions(category):
+    required_info = categories_info[category]
+    collected_info = set()
     
-def medical_history_question():
-    for question, conditions in med_ques.items():
-        print(f'Question: {question}')
-        response = input('Your Response: ')
-        answer = med_history_information(response, conditions)
-        if not answer:
-            break
-
-def medications_and_supplements():
-    for question, conditions in med_supp_ques.items():
-        print(f'Question: {question}')
-        response = input('Your response: ')
-        answer = med_supp_information(response, conditions)
-        if not answer:
-            break
+    initial_question = f"Tell me about {category.lower()}?"
+    print(f'Question: {initial_question}')
+    response = input('Your Response: ')
+    relevant_info = check_information(response, required_info, category)
+    collected_info.update(relevant_info)
+    
+    # Continue asking follow-up questions until all necessary data is collected
+    while len(collected_info) < len(required_info):
+        missing_info = [info for info in required_info if info not in collected_info]
+        follow_up_question = generate_follow_up_question(", ".join(missing_info), category)
+        if follow_up_question:
+            print(f'AI Generated Question: {follow_up_question}')
+            response = input('Your Response: ')
+            relevant_info = check_information(response, required_info, category)
+            collected_info.update(relevant_info)
 
 def summarize_responses():
-    global responses
-    print(f'Responses from the patients: {responses}')
-    try:
-        convo.send_message(f"Based on the {responses}, please provide me the summary of the patient's information that doctor's need to know.")
-        print(f' Summary of patients report: /n{convo.last.text}')
-    except ResourceExhausted:
-        print("API quota exceeded in summary. Please try again later.")
+    for category, response_list in responses.items():
+        if response_list:
+            combined_responses = " ".join(response_list)
+            print(f'Responses from the {category.lower()} section: {combined_responses}')
+            try:
+                convo.send_message(f"Based on the {combined_responses}, please provide a summary of the patient's {category.lower()} that is relevant to kidney failure.")
+                print(convo.last.text)
+            except ResourceExhausted:
+                print("API quota exceeded in summary. Please try again later.")
 
-medical_history_question()
-medications_and_supplements()
+# Start the interaction
+for category in categories_info.keys():
+    print(f'\n--- {category} Section ---')
+    ask_and_check_questions(category)
+
 summarize_responses()

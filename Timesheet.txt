@@ -58,3 +58,4 @@ Tuesday
 03:00 pm - making AI to read the patient history
 04:00 pm - Learning making AI read the files 
 05:00 pm - working on AI to code 
+07:00 pm - adding med_history function

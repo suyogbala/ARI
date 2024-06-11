@@ -5,18 +5,20 @@ Tuesday
 12:38 pm - Talking to juvan about the github.
 01:26 pm - Finished Talking with Juvan, and prof li.
 02:00 pm - finished talking to juvan about the questions, and working on the code. 
-03:18 pm - updated the code
+03:18 pm - updated the code with new 
 04:30 pm - updated the code, added the summarize function for the summary of the patient's input
 05:10 pm - added the try except error handling method
 06:22 pm - tried my code with the Javaun's question and answers, works fine.
 
 Wednesday
-12:30 pm - updated the code
+12:30 pm - updated the code with summary
+01:00 pm - learning about AI 
 03:30 pm - learning about the javascript
 06:23 pm - learning about the flask 
 06:50 pm - working on Medications and Supplements
 07:25 pm - created Medications and Supplements function
-09:12 pm - complete working on medical history and medications and Supplements, tried Javaun's answers, works fine.
+08:20 om - added med_supp question, and testing the answers.
+09:12 pm - complete working on medical history and medicatons and Supplements, tried Javaun's answers, works fine.
 
 Thrusday
 11:42 am - added med_supp_info function
@@ -26,12 +28,24 @@ Thrusday
 04:50 pm - working on the AI generated followup question.
 06:10 pm - reading the AI work on the kidney failure.
 07:30 pm - wathcing YT videos on how to feed AI with your data.
-08:00 pm - working on the code.
+08:00 pm - working on the AI code to make the better output.
 
 Friday
-11:30 am - figuring out how to just ask the question
-12:50 pm - working on the code
-02:37 pm - testing answer with the AI generated question
-04:20 pm - working on the code
-05:46 pm - working on the code
+11:30 am - figuring out how to just ask the question.
+12:50 pm - working on to giving AI proper prompt.
+01:30 pm - testing AI to give proper question considering the previous patient's answer.
+02:37 pm - testing answer with the AI generated question.
+04:20 pm - working on the code, to check when AI stop after all of the information are collected.
+05:46 pm - working on the code, testing answer and the question
+06:35 pm - learning how to give proper prompt to AI
 07:36 pm - finished the code, AI runs well.
+
+Monday
+11:00 am - asking AI for the proper way to ask question
+12:00 pm - working on AI if all of the info are collected
+01:00 pm - addded has_gathered_enough_info function to check if all of the inforamtion of the patient are collected
+02:00 pm - imported time to sleep for 60 seconds to re-run the code, when API quota exceeds.
+03:00 pm - figuring out how to stop AI asking the endless question.
+04:00 pm - still working on AI questions to stop.
+05:00 pm - working on AI generated question and answers
+08:00 pm - working on AI generated questions

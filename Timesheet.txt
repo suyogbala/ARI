@@ -49,3 +49,10 @@ Monday
 04:00 pm - still working on AI questions to stop.
 05:00 pm - working on AI generated question and answers
 08:00 pm - working on AI generated questions
+
+Tuesday
+11:00 am - Working on the code, to make it efficient 
+12:00 pm - adding new prompt
+01:00 pm - meeting
+02:00 pm - meeting
+03:00 pm - making AI to read the patient history

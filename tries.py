@@ -2,7 +2,7 @@ import time
 import google.generativeai as genai
 from google.api_core.exceptions import ResourceExhausted
 
-# Configure the Gemini AI API
+
 genai.configure(api_key="AIzaSyBSV0XbpWUbxE0qmrTxZlqd1o2VJKpWfYA")
 
 generation_config = {
@@ -30,6 +30,7 @@ convo = model.start_chat(history=[])
 
 responses = []
 
+
 def generate_follow_up_question(last_response):
     query = f"Based on the patient's response '{last_response}', what is the next follow-up question to gather general information about their medical history related to kidney failure? Respond with only the question."
     try:
@@ -50,7 +51,7 @@ def has_gathered_enough_info(combined_responses):
         return "yes" in response
     except ResourceExhausted:
         print("API quota exceeded. Retrying in 60 seconds...")
-        time.sleep(60) 
+        time.sleep(30) 
         return has_gathered_enough_info(combined_responses)
 
 def gather_patient_info():
@@ -75,15 +76,15 @@ def gather_patient_info():
             break
 
 def summary():
-    combined_responses = " ".join(responses)   
+    combined_responses = " ".join(responses)
     try:
         convo.send_message(f"Based on the responses '{combined_responses}', please provide a summary of the patient's medical history that is relevant to kidney failure.")
         print("\nSummary of the patient's medical history:")
         print(convo.last.text)
     except ResourceExhausted:
         print("API quota exceeded in summary. Retrying in 60 seconds...")
-        time.sleep(60) 
-        gather_patient_info() 
+        time.sleep(30) 
+        summary()
 
 gather_patient_info()
 summary()

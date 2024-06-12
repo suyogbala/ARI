@@ -59,3 +59,7 @@ Tuesday
 04:00 pm - Learning making AI read the files 
 05:00 pm - working on AI to code 
 07:00 pm - adding med_history function
+08:00 pm - making AI read the 
+
+Wednesday
+11:00 am - learning flask

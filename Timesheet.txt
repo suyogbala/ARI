@@ -66,3 +66,4 @@ Wednesday
 12:00 pm - learning to make website
 02:00 pm - learning javascript
 03:00 pm - learning javascript
+04:00 pm - making AI better with the better prompt

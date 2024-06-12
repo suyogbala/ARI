@@ -65,3 +65,4 @@ Wednesday
 11:00 am - learning flask
 12:00 pm - learning to make website
 02:00 pm - learning javascript
+03:00 pm - learning javascript

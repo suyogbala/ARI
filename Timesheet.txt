@@ -68,3 +68,4 @@ Wednesday
 03:00 pm - learning javascript
 04:00 pm - making AI better with the better prompt
 05:00 pm - trying to make the basic of the website, with Flask
+11:00pm - added main function with patient info

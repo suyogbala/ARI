@@ -79,5 +79,6 @@ Thrusday - June 13
 05:00 pm - working on patient info and nutritions
 6 - 7 pm - working on dialysis treatment
 
-friday - June 14
+Friday - June 14
 11:00 am - improving prompt on patient_info
+12:00 pm - learning javascript

@@ -119,8 +119,7 @@ Dietary Adjustments: To manage CKD, including reduced potassium and phosphorus i
 Social Support: Referral to a dietitian and social worker for assistance with lifestyle adjustments and coping with dialysis.
 
 '''
-def gather_patient_info():
-    questions = [
+questions = [
         "Admit Date (YYYY-MM-DD): When did you first admit to the doctor's place?",
         "Nephrologist Name: Who is your nephrologist (kidney specialist)?",
         "Frame Size: What is your frame size? (Options: Small - 5 to 5.7 ft, Medium - 5.8 to 5.11 ft, Large - over 6 ft)",
@@ -129,7 +128,7 @@ def gather_patient_info():
         "Target Weight (TW): What is your target weight as recommended by your doctor?",
         "Date of Birth (DOB) (YYYY-MM-DD): When were you born?"
     ]
-    
+def gather_patient_info():    
     for question in questions:
         print(f'\nQuestion: {question}')
         response = input('Your Response: ').strip()
@@ -140,6 +139,8 @@ def gather_patient_info():
 def generate_summary():
     global patient_info
     combined_responses = " ".join(responses)
+    sums = convo.send_message(f'assume that the {questions} is the question, and {responses} is the patients answer, so based on that give me the summary telling in full sentences.')
+    print(sums)
     try:
         convo.send_message(f"Based on the responses '{combined_responses}, please provide a summary of the patient's medical history and based on the {combined_responses} and {patient_info} provide me with the recommended type of dialysis treatment, and tell why did you choose that?")
         print("\nSummary of the patient's medical history and recommended treatment:")
@@ -149,9 +150,6 @@ def generate_summary():
         time.sleep(60)
         generate_summary()
 
-def main():
-    gather_patient_info()
-    generate_summary()
 
-if __name__ == "__main__":
-    main()
+gather_patient_info()
+generate_summary()

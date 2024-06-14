@@ -84,3 +84,4 @@ Friday - June 14
 12:00 pm - learning javascript
 01:00 pm - working on the treatment, based on patient_info and doctor report
 02:00 pm - working on the treatment
+03:00 pm - got the summary of the patient's answer

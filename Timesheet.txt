@@ -70,7 +70,7 @@ Wednesday
 05:00 pm - trying to make the basic of the website, with Flask
 11:00pm - added main function with patient info
 
-Thrusday
+Thrusday - June 13
 11:00 am - working with AI code, and table 
 12:00 pm - learning full stack
 01:00 pm - meeting
@@ -78,3 +78,6 @@ Thrusday
 03:00 pm - trying patient info
 05:00 pm - working on patient info and nutritions
 6 - 7 pm - working on dialysis treatment
+
+friday - June 14
+11:00 am - improving prompt on patient_info

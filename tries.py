@@ -2,8 +2,10 @@ import time
 import google.generativeai as genai
 from google.api_core.exceptions import ResourceExhausted
 
+# Configure Gemini AI
 genai.configure(api_key="AIzaSyBSV0XbpWUbxE0qmrTxZlqd1o2VJKpWfYA")
 
+# Define the Gemini AI model and settings
 generation_config = {
     "temperature": 1,
     "top_p": 0.95,
@@ -26,6 +28,7 @@ model = genai.GenerativeModel(
 
 convo = model.start_chat(history=[])
 responses = []
+
 patient_info = '''
 Patient Information
 Full Name: John Smith
@@ -117,39 +120,67 @@ Continued Management of Hypertension and Diabetes: With adjustments to medicatio
 Regular Follow-up: With nephrology, cardiology, and endocrinology.
 Dietary Adjustments: To manage CKD, including reduced potassium and phosphorus intake.
 Social Support: Referral to a dietitian and social worker for assistance with lifestyle adjustments and coping with dialysis.
-
 '''
+
 questions = [
-        "Admit Date (YYYY-MM-DD): When did you first admit to the doctor's place?",
-        "Nephrologist Name: Who is your nephrologist (kidney specialist)?",
-        "Frame Size: What is your frame size? (Options: Small - 5 to 5.7 ft, Medium - 5.8 to 5.11 ft, Large - over 6 ft)",
-        "Height (ft): What is your current height?",
-        "Weight Assessment: Since visiting the doctor, have you experienced any changes in weight? (Options: Gain, Loss, Stable)",
-        "Target Weight (TW): What is your target weight as recommended by your doctor?",
-        "Date of Birth (DOB) (YYYY-MM-DD): When were you born?"
-    ]
-def gather_patient_info():    
-    for question in questions:
-        print(f'\nQuestion: {question}')
+    "Admit Date (YYYY-MM-DD): When did you first admit to the doctor's place?",
+    "Nephrologist Name: Who is your nephrologist (kidney specialist)?",
+    "Frame Size: What is your frame size? (Options: Small - 5 to 5.7 ft, Medium - 5.8 to 5.11 ft, Large - over 6 ft)",
+    "Height (ft): What is your current height?",
+    "Weight Assessment: Since visiting the doctor, have you experienced any changes in weight? (Options: Gain, Loss, Stable)",
+    "Target Weight (TW): What is your target weight as recommended by your doctor?",
+    "Date of Birth (DOB) (YYYY-MM-DD): When were you born?"
+]
+
+def is_question_or_irrelevant(response, question):
+    try:
+        ai_judgment = convo.send_message(f"Determine if the following statement is a question or an irrelevant statement: '{response}' for the {question}")
+        judgment = ai_judgment.text.strip()
+        return 'question' in judgment or 'irrelevant' in judgment
+    except ResourceExhausted:
+        print("API quota exceeded. Retrying in 60 seconds...")
+        time.sleep(60)
+        return is_question_or_irrelevant(response)
+
+def gather_patient_info():
+    i = 0
+    while i < len(questions):
+        print(f'\nQuestion: {questions[i]}')
         response = input('Your Response: ').strip()
         responses.append(response)
+        
+        if is_question_or_irrelevant(response, questions[i]):
+            try:
+                ai_response = convo.send_message(f"The patient said: {response}. Please respond appropriately.")
+                print(f"AI Response: {ai_response.text}")
+                responses.pop()  
+            except ResourceExhausted:
+                print("API quota exceeded. Retrying in 60 seconds...")
+                time.sleep(60)
+                continue
+        else:
+            i += 1
     
     print("\nThank you for providing the information. We have gathered all the necessary details.")
 
 def generate_summary():
     global patient_info
     combined_responses = " ".join(responses)
-    sums = convo.send_message(f'assume that the {questions} is the question, and {responses} is the patients answer, so based on that give me the summary telling in full sentences.')
-    print(sums)
+    prompt = (
+        f"Assume that the questions are: {questions}. The patient's responses are: {responses}. "
+        f"Based on these responses and the following patient information: {patient_info}, "
+        f"please provide a summary of the patient's medical history and the recommended type of dialysis treatment. "
+        f"Also, explain why this treatment is recommended."
+    )
+
     try:
-        convo.send_message(f"Based on the responses '{combined_responses}, please provide a summary of the patient's medical history and based on the {combined_responses} and {patient_info} provide me with the recommended type of dialysis treatment, and tell why did you choose that?")
+        summary_response = convo.send_message(prompt)
         print("\nSummary of the patient's medical history and recommended treatment:")
-        print(convo.last.text)
+        print(summary_response.text)
     except ResourceExhausted:
         print("API quota exceeded in summary. Retrying in 60 seconds...")
         time.sleep(60)
         generate_summary()
-
 
 gather_patient_info()
 generate_summary()

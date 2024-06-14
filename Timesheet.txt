@@ -82,3 +82,4 @@ Thrusday - June 13
 Friday - June 14
 11:00 am - improving prompt on patient_info
 12:00 pm - learning javascript
+01:00 pm - working on the treatment, based on patient_info and doctor report

@@ -151,8 +151,8 @@ def gather_patient_info():
         
         if is_question_or_irrelevant(response, questions[i]):
             try:
-                ai_response = convo.send_message(f"The patient said: {response}. Please respond appropriately.")
-                print(f"AI Response: {ai_response.text}")
+                ai_response = convo.send_message(response)
+                print(f"AI Response: {ai_response.text.strip()}")
                 responses.pop()  
             except ResourceExhausted:
                 print("API quota exceeded. Retrying in 60 seconds...")

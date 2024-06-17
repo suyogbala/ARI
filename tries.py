@@ -104,31 +104,52 @@ questions = [
     "Date: When was the last eye exam?"
 ]
 
-def is_question_or_irrelevant(response, question):
-    prompt = f"The patient responded: '{response}' to the question: '{question}'. Is this response typical or relevant to the question?"
-    ai_judgment = convo.send_message(prompt)
-    judgment = ai_judgment.text.strip().lower()
-    print(judgment)
-    return 'no' in judgment
+def check_if_question(response):
+    return response.strip().endswith('?')
 
-def gather_patient_info():
+def handle_unclear_response(response, question):
+    try:
+        ai_response = convo.send_message(f"The patient responded: '{response}' to the question: '{question}'. Please clarify.")
+        print(f"AI Response: {ai_response.text.strip()}")
+
+        while True:
+            follow_up_response = input('Do you have any questions or need clarification on anything? (Type "no" to proceed): ').strip().lower()
+            if follow_up_response == 'no':
+                break
+            else:
+                try:
+                    ai_response = convo.send_message(f"The patient has a question: '{follow_up_response}'. Please provide an answer.")
+                    print(f"AI Response: {ai_response.text.strip()}")
+                except ResourceExhausted:
+                    print("API quota exceeded. Retrying in 60 seconds...")
+                    time.sleep(60)
+                    
+        if input('Are you ready to continue with the next survey question? (Type "yes" to continue): ').strip().lower() != 'yes':
+            return False
+    except ResourceExhausted:
+        print("API quota exceeded. Retrying in 60 seconds...")
+        time.sleep(60)
+    
+    return True
+
+def gather_patient_info(questions):
     i = 0
     while i < len(questions):
         print(f'\nQuestion: {questions[i]}')
         response = input('Your Response: ').strip()
         
-        if is_question_or_irrelevant(response, questions[i]):
+        if check_if_question(response):
             try:
-                ai_response = convo.send_message(f"The patient said: '{response}'. Please respond appropriately.")
+                ai_response = convo.send_message(response)
                 print(f"AI Response: {ai_response.text.strip()}")
                 
                 while True:
-                    follow_up_response = input('Do you have any questions or need clarification on anything? (Type "no" to proceed): ').strip().lower()
+                    follow_up_response = input('Do you have any additional questions? (Type "no" to proceed): ').strip().lower()
                     if follow_up_response == 'no':
                         break
                     else:
                         try:
-                            ai_response = convo.send_message(f"The patient has a question: '{follow_up_response}'. Please provide an answer.")
+                            ai_response = convo.send_message(follow_up_response)
                             print(f"AI Response: {ai_response.text.strip()}")
                         except ResourceExhausted:
                             print("API quota exceeded. Retrying in 60 seconds...")
@@ -142,6 +163,8 @@ def gather_patient_info():
                 time.sleep(60)
                 continue
         else:
+            if not handle_unclear_response(response, questions[i]):
+                break
             responses.append(response)
             i += 1
 

@@ -95,3 +95,4 @@ Monday - June 17
 01:00 pm - working on prompt for better output
 02:00 pm - giving AI prompt 
 03:00 pm - working on the patients answer
+04:00 pm - diff function for irrelevent answer, and question

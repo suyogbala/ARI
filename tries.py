@@ -2,10 +2,10 @@ import time
 import google.generativeai as genai
 from google.api_core.exceptions import ResourceExhausted
 
-# Configure Gemini AI
+
 genai.configure(api_key="AIzaSyBSV0XbpWUbxE0qmrTxZlqd1o2VJKpWfYA")
 
-# Define the Gemini AI model and settings
+
 generation_config = {
     "temperature": 1,
     "top_p": 0.95,
@@ -29,118 +29,88 @@ model = genai.GenerativeModel(
 convo = model.start_chat(history=[])
 responses = []
 
-patient_info = '''
-Patient Information
-Full Name: John Smith
-Date of Birth: April 20, 1965
-Age: 59
-Gender: Male
-Contact Information: 123 Elm Street, Anytown, USA, (555) 123-4567
-
-Chief Complaint (CC)
-"I’m feeling very fatigued and have swelling in my legs and ankles. My doctor said my kidney function is worsening."
-
-History of Present Illness (HPI)
-John Smith has a history of chronic kidney disease (CKD), which has progressively worsened over the past five years. He was diagnosed with CKD stage 3 in 2019. Over the last six months, his symptoms have included:
-Fatigue: Persistent and increasing over the past few months.
-Edema: Noticeable swelling in the lower extremities, worsening in the past three months.
-Decreased Urine Output: John has noticed a reduction in the volume of urine over the last four weeks.
-Nausea: Occasional nausea, especially in the mornings.
-Itching: Persistent itching that is not relieved by over-the-counter medications.
-Recent blood tests indicate a significant decrease in kidney function with an eGFR (estimated glomerular filtration rate) dropping below 15 mL/min/1.73m², indicating CKD stage 5. His nephrologist recommended starting dialysis.
-
-Past Medical History (PMH)
-Chronic Kidney Disease (CKD): Diagnosed in 2019, initially stage 3, now progressed to stage 5.
-Hypertension (High Blood Pressure): Diagnosed in 2005, currently managed with medication.
-Type 2 Diabetes Mellitus: Diagnosed in 2000, controlled with oral medications and diet.
-Congestive Heart Failure (CHF): Diagnosed in 2021, under regular cardiology follow-up.
-Obesity: Body Mass Index (BMI) of 32.
-Hyperlipidemia (High Cholesterol): Diagnosed in 2008, managed with statins.
-Peripheral Neuropathy: Associated with diabetes, diagnosed in 2015.
-
-Medications
-Lisinopril: 20 mg, once daily (for hypertension and CKD management).
-Metformin: 1000 mg, twice daily (for diabetes).
-Furosemide: 40 mg, once daily (for edema).
-Atorvastatin: 40 mg, once daily (for high cholesterol).
-Aspirin: 81 mg, once daily (preventive for cardiovascular disease).
-Gabapentin: 300 mg, twice daily (for peripheral neuropathy).
-
-Allergies
-Sulfa Drugs: Causes rash and difficulty breathing.
-
-Family Medical History
-Father: Heart disease, died at age 65.
-Mother: Type 2 diabetes, currently 82 years old.
-Brother: Hypertension, age 61.
-Sister: No significant health issues, age 55.
-
-Social History
-Occupation: Retired, formerly a construction manager.
-Marital Status: Married, with two adult children.
-Tobacco Use: Smoked 1 pack per day for 20 years, quit in 2010.
-Alcohol Use: Drinks occasionally, about 2-3 beers per week.
-Drug Use: No history of recreational drug use.
-Exercise: Limited due to fatigue and swelling, previously enjoyed walking.
-Diet: Low-sodium, diabetic-friendly diet but struggles with weight control.
-
-Preventive and Screening History
-Last Tetanus Booster: 2022
-Last Flu Vaccine: October 2023
-Pneumonia Vaccine (Pneumovax): Received in 2020
-Colonoscopy: Last done in 2020, no abnormalities.
-Mammogram: N/A (male patient)
-Eye Exam: Annual check-ups for diabetic retinopathy, last done in February 2024.
-
-Review of Systems (ROS)
-General: Significant fatigue, recent weight loss of 10 lbs over 2 months.
-Cardiovascular: Shortness of breath with minimal exertion, occasional chest discomfort.
-Respiratory: No cough or wheezing.
-Gastrointestinal: Reduced appetite, occasional nausea.
-Genitourinary: Decreased urine output, nocturia.
-Musculoskeletal: Muscle cramps, joint pain in the knees and back.
-Neurological: Tingling in feet, no recent headaches or dizziness.
-Psychiatric: Feels anxious about health, occasional low mood but no depression.
-Skin: Persistent itching, no rashes.
-Hematologic: Bruises easily, no unusual bleeding.
-Endocrine: Increased thirst, consistent with diabetes.
-EENT (Eyes, Ears, Nose, Throat): Blurred vision, wears glasses, no hearing issues.
-
-Recent Laboratory Results
-eGFR: 12 mL/min/1.73m² (indicating stage 5 CKD).
-Creatinine: 5.4 mg/dL (elevated, indicating kidney dysfunction).
-Hemoglobin A1c: 7.2% (indicating controlled diabetes).
-Blood Pressure: 145/85 mmHg (slightly elevated).
-Potassium: 5.2 mEq/L (slightly elevated, monitored due to CKD).
-
-Summary and Plan
-John Smith’s medical history and current symptoms indicate he is in advanced stages of CKD, now requiring dialysis. His treatment plan includes:
-Initiation of Hemodialysis: Scheduled for next week.
-Continued Management of Hypertension and Diabetes: With adjustments to medications as needed.
-Regular Follow-up: With nephrology, cardiology, and endocrinology.
-Dietary Adjustments: To manage CKD, including reduced potassium and phosphorus intake.
-Social Support: Referral to a dietitian and social worker for assistance with lifestyle adjustments and coping with dialysis.
-'''
 
 questions = [
-    "Admit Date (YYYY-MM-DD): When did you first admit to the doctor's place?",
-    "Nephrologist Name: Who is your nephrologist (kidney specialist)?",
+    "Admit Date: When did you first admit to the doctor's place?",
+    "Nephrologist: Who is your nephrologist (kidney specialist)?",
     "Frame Size: What is your frame size? (Options: Small - 5 to 5.7 ft, Medium - 5.8 to 5.11 ft, Large - over 6 ft)",
-    "Height (ft): What is your current height?",
+    "Height: What is your current height?",
     "Weight Assessment: Since visiting the doctor, have you experienced any changes in weight? (Options: Gain, Loss, Stable)",
     "Target Weight (TW): What is your target weight as recommended by your doctor?",
-    "Date of Birth (DOB) (YYYY-MM-DD): When were you born?"
+    "Date of Birth (DOB): When were you born?",
+    "Current weight: Have you gained, lost, or maintained weight since visiting the doctor? (Options: Gain, Loss, Maintain)",
+    "Usual Body Weight (UBW): What is your usual day-to-day weight in general?",
+    "Standard Body Weight Index (SBWI): What is your standard body weight index?",
+    "Ideal Body Weight (IBW): What is your targeted weight for dialysis?",
+    "Dietitian: Who is your dietitian?",
+    "Amputee: Do you have any amputations? (Options: Yes, No)",
+    "If Yes, Adjusted Body Weight (Adj BW): What is your adjusted body weight?",
+    "Weight Change: If you have gained or lost weight, how much?",
+    "Timeframe: Over what timeframe did you experience this weight change?",
+    "Medications (Binders, Active Vitamin D, Calcimimetics): Are you taking any of these medications?",
+    "Diet Intake (past 2 weeks): How would you rate your diet intake over the past 2 weeks? (Options: Good, Borderline, Poor)",
+    "Intake Compared to Usual Meal: How does your current intake compare to your usual meal intake?",
+    "Meals: What did you eat for breakfast, lunch, dinner, and snacks?",
+    "Food/Cultural Preferences/Dislikes: What are your food preferences or dislikes?",
+    "Food Allergies/Intolerances: What are your food allergies or intolerances?",
+    "Nutrition/Vitamin/Herbal Supplements: Are you taking any nutrition, vitamin, or herbal supplements?",
+    "Food Accessibility: Can you afford food? (Options: Yes, No, Needs Assistance)",
+    "Food Stamps/Food Program: Are you receiving food stamps or part of a food program? (Options: Yes, No)",
+    "Medications: What medications are you currently taking?",
+    "Coverage: Do you have full, limited, or no coverage for your medications? (Options: Full, Limited/No Coverage)",
+    "Bundled: Are your medications bundled? (Options: Yes, No)",
+    "Prior Diet Counseling: Have you received prior diet counseling? (Options: Yes, No)",
+    "By whom?: Who provided the diet counseling?",
+    "Previous Diet(s): What is your usual diet?",
+    "Dental Status: What is your dental status? (Options: Own, Dentures, Toothache, Missing Teeth, Gum Problems, Chewing Difficulty, Bridge/Partial)",
+    "Access to a Dentist: Do you have access to a dentist? (Options: Yes, No)",
+    "Appointment Scheduled: Do you have a dentist appointment scheduled? (Options: Yes, No)",
+    "Difficulty Swallowing: Do you have difficulty swallowing? (Options: Yes, No)",
+    "Current Appetite (1 worst, 10 best): How would you rate your current appetite on a scale of 1 to 10?",
+    "Appetite Trend: How has your appetite changed recently? (Options: No Change, Declining, Improving)",
+    "GI Symptoms (> 2 weeks): Have you experienced any GI symptoms for more than 2 weeks? (Options: Nausea/Vomiting, Constipation/Diarrhea, Obese, Heartburn, Pica, Hiccups, Indigestion, Altered/Metallic Taste, GI Ulcer, Abdominal Pain, Blood in Stool, Colostomy, Anorexia, Coffee Ground Emesis, TPN/IDPN/IPN, Tube Feeding, Other, No Identified Problems)",
+    "Frequency of Symptoms: How often do you experience these symptoms? (Options: Very Few, Some, Frequent, Constant)",
+    "Symptom Treatments: What treatments are you using for these symptoms? (Options: No Treatments, Diet, OTC Medications, Prescribed Medications)",
+    "Adequate Cooking Facilities: Do you have adequate cooking facilities? (Options: Yes, No)",
+    "Grocery Shopping: How do you get your groceries? (Options: Self, Family, Extended Care Facility, Delivery Service, Caregiver)",
+    "Type of Eater: What type of eater are you? (Options: Easy Cooking, Grab-and-Go, Hardly Home, Home Cooking, Extended Care Facility)",
+    "Meals Away From Home: How often do you eat meals away from home? (Options: 1-2x per week, 3-4x per week, Rarely, Usually)",
+    "Changes in Living Situation Affecting Food Access: Have changes in your living situation affected your access to food? (Options: Yes, No)",
+    "Food Preparation: Who prepares your food? (Options: Self, Family, Extended Care Facility, Friends, Prepared Meals Delivered to Home)",
+    "Activity Level (Exercise equal to 30 minutes): What is your activity level? (Options: Inactive, Light, Active)",
+    "Smoker: Do you smoke? (Options: Yes, No)",
+    "Alcohol Use: Do you use alcohol? (Options: Yes, No)",
+    "Drug Use: Do you use drugs? (Options: Yes, No)",
+    "Functional Capacity: How would you describe your functional capacity? (Options: Fully Functional, Some Loss of Stamina, Severe Loss of Functional Ability)",
+    "Functional Capacity Rating: How would you rate your functional capacity? (Options: Fully Functional - No Dysfunction, Improvement in Dysfunction, Mild to Moderate Loss of Stamina, Light Activity, Change in Function, Difficulty with Ambulation, Severe Loss of Functional Ability, Difficulty with Activity, Bed/Chair Ridden with Little or No Activity)",
+    "Edema (Nutrition Related): Do you experience edema related to nutrition? (Options: None, Mild, Moderate, Severe)",
+    "Fat Stores: How would you describe your fat stores? (Options: None, Mild, Moderate, Severe)",
+    "Muscle Wasting: How would you describe your muscle wasting? (Options: None, Mild, Moderate, Severe)",
+    "Hospitalization in the Past 30 Days: Have you been hospitalized in the past 30 days? (Options: Yes, No)",
+    "If Yes: Did hospitalization impact your ability to shop/prepare food? (Options: Yes, No)",
+    "Did hospitalization change quantity of intake? (Options: Yes, No)",
+    "Did hospitalization have a nutritional impact? (Options: Yes, No)",
+    "Does the patient have diabetes? (Options: Yes, No)",
+    "If Yes: What type of diabetes do you have? (Options: Type 1, Type 2)",
+    "Diet Controlled Only?: Is your diabetes diet controlled only? (Options: Yes, No)",
+    "Does the patient take insulin or oral agents at home? (Options: Yes, No)",
+    "Does the patient utilize an insulin pump? (Options: Yes, No)",
+    "Does the patient check blood sugar at home? (Options: Yes, No)",
+    "Usual Glucose Ranges: What are your usual glucose ranges?",
+    "Does the patient have a working glucometer and supplies? (Options: Yes, No)",
+    "Is there a provider managing their diabetes care? (Options: Yes, No)",
+    "Name of Provider: What is the name of your diabetes care provider?",
+    "Eye Exam in the Last Year: Have you had an eye exam in the last year? (Options: Yes, No)",
+    "Date: When was the last eye exam?"
 ]
 
-def is_question_or_irrelevant(response, question):
-    try:
-        ai_judgment = convo.send_message(f"Determine if the following statement is a question or an irrelevant statement: '{response}' for the {question}")
-        judgment = ai_judgment.text.strip()
-        return 'question' in judgment or 'irrelevant' in judgment
-    except ResourceExhausted:
-        print("API quota exceeded. Retrying in 60 seconds...")
-        time.sleep(60)
-        return is_question_or_irrelevant(response)
+
+def is_response_correct(response, question):
+    prompt = f"The patient was asked: {question}. They responded: {response}. Is this response correct for the question?, just check if it is correct or not"
+    ai_judgment = convo.send_message(prompt)
+    judgment = ai_judgment.text.strip().lower()
+    return 'yes' in judgment
+
 
 def gather_patient_info():
     i = 0
@@ -149,38 +119,30 @@ def gather_patient_info():
         response = input('Your Response: ').strip()
         responses.append(response)
         
-        if is_question_or_irrelevant(response, questions[i]):
+        if not is_response_correct(response, questions[i]):
             try:
-                ai_response = convo.send_message(response)
+                ai_response = convo.send_message(f"The patient's response was: {response}. Please provide the correct information or clarify.")
                 print(f"AI Response: {ai_response.text.strip()}")
-                responses.pop()  
+                responses.pop()
             except ResourceExhausted:
                 print("API quota exceeded. Retrying in 60 seconds...")
                 time.sleep(60)
                 continue
-        else:
+        
+        patient_has_question = True
+        while patient_has_question:
+            follow_up_response = input('Do you have any questions or need clarification on anything? (Type "no" to proceed): ').strip().lower()
+            if follow_up_response == 'no':
+                patient_has_question = False
+            else:
+                try:
+                    ai_response = convo.send_message(follow_up_response)
+                    print(f"AI Response: {ai_response.text.strip()}")
+                except ResourceExhausted:
+                    print("API quota exceeded. Retrying in 60 seconds...")
+                    time.sleep(60)
+        
+        if is_response_correct(response, questions[i]) or not response:
             i += 1
-    
-    print("\nThank you for providing the information. We have gathered all the necessary details.")
-
-def generate_summary():
-    global patient_info
-    combined_responses = " ".join(responses)
-    prompt = (
-        f"Assume that the questions are: {questions}. The patient's responses are: {responses}. "
-        f"Based on these responses and the following patient information: {patient_info}, "
-        f"please provide a summary of the patient's medical history and the recommended type of dialysis treatment. "
-        f"Also, explain why this treatment is recommended."
-    )
-
-    try:
-        summary_response = convo.send_message(prompt)
-        print("\nSummary of the patient's medical history and recommended treatment:")
-        print(summary_response.text)
-    except ResourceExhausted:
-        print("API quota exceeded in summary. Retrying in 60 seconds...")
-        time.sleep(60)
-        generate_summary()
 
 gather_patient_info()
-generate_summary()

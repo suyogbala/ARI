@@ -2,10 +2,10 @@ import time
 import google.generativeai as genai
 from google.api_core.exceptions import ResourceExhausted
 
-
+# Configure the API key for Google Generative AI
 genai.configure(api_key="AIzaSyBSV0XbpWUbxE0qmrTxZlqd1o2VJKpWfYA")
 
-
+# Configure the generation settings for the model
 generation_config = {
     "temperature": 1,
     "top_p": 0.95,
@@ -13,12 +13,14 @@ generation_config = {
     "max_output_tokens": 8192,
 }
 
+# Safety settings to block inappropriate content
 safety_settings = [
     {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_MEDIUM_AND_ABOVE"},
     {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_MEDIUM_AND_ABOVE"},
     {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_MEDIUM_AND_ABOVE"},
     {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_MEDIUM_AND_ABOVE"},
 ]
+
 
 model = genai.GenerativeModel(
     model_name="gemini-1.5-pro-latest",
@@ -104,13 +106,12 @@ questions = [
     "Date: When was the last eye exam?"
 ]
 
-
-def is_response_correct(response, question):
-    prompt = f"The patient was asked: {question}. They responded: {response}. Is this response correct for the question?, just check if it is correct or not"
+def is_question_or_irrelevant(response, question):
+    prompt = f"The patient responded: {response} for the question: {question}. Is this a question or an irrelevant answer? If so then start just say yes."
     ai_judgment = convo.send_message(prompt)
     judgment = ai_judgment.text.strip().lower()
+    print(judgment)
     return 'yes' in judgment
-
 
 def gather_patient_info():
     i = 0
@@ -119,9 +120,9 @@ def gather_patient_info():
         response = input('Your Response: ').strip()
         responses.append(response)
         
-        if not is_response_correct(response, questions[i]):
+        if is_question_or_irrelevant(response, questions[i]):
             try:
-                ai_response = convo.send_message(f"The patient's response was: {response}. Please provide the correct information or clarify.")
+                ai_response = convo.send_message(f"The patient said: {response}. Please respond appropriately.")
                 print(f"AI Response: {ai_response.text.strip()}")
                 responses.pop()
             except ResourceExhausted:
@@ -142,7 +143,7 @@ def gather_patient_info():
                     print("API quota exceeded. Retrying in 60 seconds...")
                     time.sleep(60)
         
-        if is_response_correct(response, questions[i]) or not response:
+        if not is_question_or_irrelevant(response):
             i += 1
 
 gather_patient_info()

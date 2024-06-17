@@ -2,10 +2,10 @@ import time
 import google.generativeai as genai
 from google.api_core.exceptions import ResourceExhausted
 
-# Configure the API key for Google Generative AI
+
 genai.configure(api_key="AIzaSyBSV0XbpWUbxE0qmrTxZlqd1o2VJKpWfYA")
 
-# Configure the generation settings for the model
+
 generation_config = {
     "temperature": 1,
     "top_p": 0.95,
@@ -13,14 +13,13 @@ generation_config = {
     "max_output_tokens": 8192,
 }
 
-# Safety settings to block inappropriate content
+
 safety_settings = [
     {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_MEDIUM_AND_ABOVE"},
     {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_MEDIUM_AND_ABOVE"},
     {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_MEDIUM_AND_ABOVE"},
     {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_MEDIUM_AND_ABOVE"},
 ]
-
 
 model = genai.GenerativeModel(
     model_name="gemini-1.5-pro-latest",
@@ -30,7 +29,6 @@ model = genai.GenerativeModel(
 
 convo = model.start_chat(history=[])
 responses = []
-
 
 questions = [
     "Admit Date: When did you first admit to the doctor's place?",
@@ -107,43 +105,44 @@ questions = [
 ]
 
 def is_question_or_irrelevant(response, question):
-    prompt = f"The patient responded: {response} for the question: {question}. Is this a question or an irrelevant answer? If so then start just say yes."
+    prompt = f"The patient responded: '{response}' to the question: '{question}'. Is this response typical or relevant to the question?"
     ai_judgment = convo.send_message(prompt)
     judgment = ai_judgment.text.strip().lower()
     print(judgment)
-    return 'yes' in judgment
+    return 'no' in judgment
 
 def gather_patient_info():
     i = 0
     while i < len(questions):
         print(f'\nQuestion: {questions[i]}')
         response = input('Your Response: ').strip()
-        responses.append(response)
         
         if is_question_or_irrelevant(response, questions[i]):
             try:
-                ai_response = convo.send_message(f"The patient said: {response}. Please respond appropriately.")
+                ai_response = convo.send_message(f"The patient said: '{response}'. Please respond appropriately.")
                 print(f"AI Response: {ai_response.text.strip()}")
-                responses.pop()
+                
+                while True:
+                    follow_up_response = input('Do you have any questions or need clarification on anything? (Type "no" to proceed): ').strip().lower()
+                    if follow_up_response == 'no':
+                        break
+                    else:
+                        try:
+                            ai_response = convo.send_message(f"The patient has a question: '{follow_up_response}'. Please provide an answer.")
+                            print(f"AI Response: {ai_response.text.strip()}")
+                        except ResourceExhausted:
+                            print("API quota exceeded. Retrying in 60 seconds...")
+                            time.sleep(60)
+                
+                if input('Are you ready to continue with the next survey question? (Type "yes" to continue): ').strip().lower() != 'yes':
+                    break
+                
             except ResourceExhausted:
                 print("API quota exceeded. Retrying in 60 seconds...")
                 time.sleep(60)
                 continue
-        
-        patient_has_question = True
-        while patient_has_question:
-            follow_up_response = input('Do you have any questions or need clarification on anything? (Type "no" to proceed): ').strip().lower()
-            if follow_up_response == 'no':
-                patient_has_question = False
-            else:
-                try:
-                    ai_response = convo.send_message(follow_up_response)
-                    print(f"AI Response: {ai_response.text.strip()}")
-                except ResourceExhausted:
-                    print("API quota exceeded. Retrying in 60 seconds...")
-                    time.sleep(60)
-        
-        if not is_question_or_irrelevant(response):
+        else:
+            responses.append(response)
             i += 1
 
 gather_patient_info()

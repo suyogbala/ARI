@@ -93,3 +93,5 @@ Monday - June 17
 11:00 am - working to put all of the questions
 12:00 pm - checking answer with the questions
 01:00 pm - working on prompt for better output
+02:00 pm - giving AI prompt 
+03:00 pm - working on the patients answer

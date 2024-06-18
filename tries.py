@@ -2,9 +2,7 @@ import time
 import google.generativeai as genai
 from google.api_core.exceptions import ResourceExhausted
 
-
 genai.configure(api_key="AIzaSyBSV0XbpWUbxE0qmrTxZlqd1o2VJKpWfYA")
-
 
 generation_config = {
     "temperature": 1,
@@ -12,7 +10,6 @@ generation_config = {
     "top_k": 64,
     "max_output_tokens": 8192,
 }
-
 
 safety_settings = [
     {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_MEDIUM_AND_ABOVE"},
@@ -43,8 +40,7 @@ questions = [
     "Standard Body Weight Index (SBWI): What is your standard body weight index?",
     "Ideal Body Weight (IBW): What is your targeted weight for dialysis?",
     "Dietitian: Who is your dietitian?",
-    "Amputee: Do you have any amputations? (Options: Yes, No)",
-    "If Yes, Adjusted Body Weight (Adj BW): What is your adjusted body weight?",
+    "Amputee: Do you have any amputations? (Options: Yes, No), If Yes, Adjusted Body Weight (Adj BW): What is your adjusted body weight?",
     "Weight Change: If you have gained or lost weight, how much?",
     "Timeframe: Over what timeframe did you experience this weight change?",
     "Medications (Binders, Active Vitamin D, Calcimimetics): Are you taking any of these medications?",
@@ -104,13 +100,35 @@ questions = [
     "Date: When was the last eye exam?"
 ]
 
-def check_if_question(response):
-    ask = convo.send_message(f"Do you think {response} is a question? Type yes or no")
-    response = ask.text.strip()
-    print(response)
-    if "yes".lower() in response:
-        return True
-    return False
+table= {}
+
+def check_if_question(response, question):
+    try:
+        ask = convo.send_message(f"Do you think '{response}' is a question? Type 'yes' or 'no'.")
+        response = ask.text.strip()
+        print(response)
+        if "yes" in response.lower():
+            return True
+        else:
+            table[question] = response
+
+    except ResourceExhausted:
+        print("API quota exceeded. Retrying in 60 seconds...")
+        time.sleep(60)
+
+def check_if_understandable(response, question):
+    try:
+        ask = convo.send_message(f"Is the following response {response} understandable? for the question {question}'. Type 'yes' or 'no'.")
+        response = ask.text.strip()
+        print(response)
+        if "yes" in response.lower():
+            return True
+        else:
+            table[question] = response
+    
+    except ResourceExhausted:
+        print("API quota exceeded. Retrying in 60 seconds...")
+        time.sleep(60)
     
 
 def gather_patient_info():
@@ -118,24 +136,45 @@ def gather_patient_info():
     while i < len(questions):
         print(f'\nQuestion: {questions[i]}')
         response = input('Your Response: ').strip()
-        
-        if check_if_question(response):
+
+        if check_if_question(response, questions[i]):
             try:
-                ai_response = convo.send_message(response)
+                answers = []
+                ai_response = convo.send_message(f"The patient responded '{response}' to the question: {questions[i]}. Please response to it.")
                 print(f"AI Response: {ai_response.text.strip()}")
                 while True:
-                    ques = input('Do you have any questions? Type "no" to proceed')
-                    if ques == "NO".lower():
+                    ques = input(f"Your Response: ")
+                    resp = convo.send_message(f"The patient said : {ques}. Is the following response {ques} understandable for the question {questions[i]}'. Type 'yes' or 'no'.")
+                    ans = resp.text.strip()
+                    print(ans)
+                    if ans.lower() == "yes":
                         i += 1
                         break
                     else:
-                        resp = convo.send_message(f"Patient said this {resp}, please answer accordingly")
-                        print(resp.text.strip())
-                
+                        convo.send_message(f"The patient responded '{und_resp}' for the question: {questions[i]}. Ask a follow-up question to clarify.")
             except ResourceExhausted:
                 print("API quota exceeded. Retrying in 60 seconds...")
                 time.sleep(60)
-                continue
+        
+        elif not check_if_understandable(response, questions[i]):
+            try:
+                ai_response = convo.send_message(f"The patient responded '{response}' for the question: {questions[i]}. Ask a follow-up question to clarify.")
+                print(f"AI Response: {ai_response.text.strip()}")
+                while True:
+                    und_resp = input(f"Your Response: ")
+                    resp = convo.send_message(f"Is the following response {und_resp} understandable for the question {questions[i]}'. Type 'yes' or 'no'.")
+                    ans = resp.text.strip()
+                    print(ans)
+                    if ans.lower() == "yes":
+                        i += 1
+                        break
+                    else:
+                        convo.send_message(f"The patient responded '{und_resp}' for the question: {questions[i]}. Ask a follow-up question to clarify.")
+
+            except ResourceExhausted:
+                print("API quota exceeded. Retrying in 60 seconds...")
+                time.sleep(60)
+
         else:
             i += 1
 

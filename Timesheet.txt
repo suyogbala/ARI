@@ -97,3 +97,6 @@ Monday - June 17
 03:00 pm - working on the patients answer
 04:00 pm - diff function for irrelevent answer, and question
 04-06 pm - trying to make to check if question function better.
+
+Tuesday - June 18
+11:00 am - changes in the if_question function

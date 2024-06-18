@@ -102,3 +102,4 @@ Tuesday - June 18
 11:00 am - changes in the if_question function
 12:00 pm - meeting
 01:00 pm - making questions in a simpler way
+02:00 pm - making questions

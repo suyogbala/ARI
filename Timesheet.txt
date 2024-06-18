@@ -100,3 +100,4 @@ Monday - June 17
 
 Tuesday - June 18
 11:00 am - changes in the if_question function
+12:00 pm - meeting

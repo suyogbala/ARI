@@ -31,7 +31,7 @@ convo = model.start_chat(history=[])
 responses = []
 
 questions = [
-    "Admit Date: When did you first admit to the doctor's place?",
+    "Admit Date: What date were you first admitted to the hospital?",
     "Nephrologist: Who is your nephrologist (kidney specialist)?",
     "Frame Size: What is your frame size? (Options: Small - 5 to 5.7 ft, Medium - 5.8 to 5.11 ft, Large - over 6 ft)",
     "Height: What is your current height?",
@@ -105,34 +105,15 @@ questions = [
 ]
 
 def check_if_question(response):
-    return response.strip().endswith('?')
-
-def handle_unclear_response(response, question):
-    try:
-        ai_response = convo.send_message(f"The patient responded: '{response}' to the question: '{question}'. Please clarify.")
-        print(f"AI Response: {ai_response.text.strip()}")
-
-        while True:
-            follow_up_response = input('Do you have any questions or need clarification on anything? (Type "no" to proceed): ').strip().lower()
-            if follow_up_response == 'no':
-                break
-            else:
-                try:
-                    ai_response = convo.send_message(f"The patient has a question: '{follow_up_response}'. Please provide an answer.")
-                    print(f"AI Response: {ai_response.text.strip()}")
-                except ResourceExhausted:
-                    print("API quota exceeded. Retrying in 60 seconds...")
-                    time.sleep(60)
-                    
-        if input('Are you ready to continue with the next survey question? (Type "yes" to continue): ').strip().lower() != 'yes':
-            return False
-    except ResourceExhausted:
-        print("API quota exceeded. Retrying in 60 seconds...")
-        time.sleep(60)
+    ask = convo.send_message(f"Do you think {response} is a question? Type yes or no")
+    response = ask.text.strip()
+    print(response)
+    if "yes".lower() in response:
+        return True
+    return False
     
-    return True
 
-def gather_patient_info(questions):
+def gather_patient_info():
     i = 0
     while i < len(questions):
         print(f'\nQuestion: {questions[i]}')
@@ -142,30 +123,20 @@ def gather_patient_info(questions):
             try:
                 ai_response = convo.send_message(response)
                 print(f"AI Response: {ai_response.text.strip()}")
-                
                 while True:
-                    follow_up_response = input('Do you have any additional questions? (Type "no" to proceed): ').strip().lower()
-                    if follow_up_response == 'no':
+                    ques = input('Do you have any questions? Type "no" to proceed')
+                    if ques == "NO".lower():
+                        i += 1
                         break
                     else:
-                        try:
-                            ai_response = convo.send_message(follow_up_response)
-                            print(f"AI Response: {ai_response.text.strip()}")
-                        except ResourceExhausted:
-                            print("API quota exceeded. Retrying in 60 seconds...")
-                            time.sleep(60)
-                
-                if input('Are you ready to continue with the next survey question? (Type "yes" to continue): ').strip().lower() != 'yes':
-                    break
+                        resp = convo.send_message(f"Patient said this {resp}, please answer accordingly")
+                        print(resp.text.strip())
                 
             except ResourceExhausted:
                 print("API quota exceeded. Retrying in 60 seconds...")
                 time.sleep(60)
                 continue
         else:
-            if not handle_unclear_response(response, questions[i]):
-                break
-            responses.append(response)
             i += 1
 
 gather_patient_info()

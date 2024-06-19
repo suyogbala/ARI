@@ -110,3 +110,4 @@ Tuesday - June 18
 
 Wedbesday - June 19
 11:00 am - learning flask
+12:00 pm - working on the patient input

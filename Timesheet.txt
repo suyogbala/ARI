@@ -114,3 +114,4 @@ Wedbesday - June 19
 01:00 pm - improving patient info
 02:00 pm - working on patient response
 02-04 pm - added is_answer and human_like _delay function
+05:00 pm - working on the summary of the patient information

@@ -1,14 +1,15 @@
 import time
+import random
 import google.generativeai as genai
 from google.api_core.exceptions import ResourceExhausted
 
 genai.configure(api_key="AIzaSyBSV0XbpWUbxE0qmrTxZlqd1o2VJKpWfYA")
 
 generation_config = {
-    "temperature": 1,
-    "top_p": 0.95,
-    "top_k": 64,
-    "max_output_tokens": 8192,
+    "temperature": 0.7,
+    "top_p": 0.9,
+    "top_k": 50,
+    "max_output_tokens": 200,
 }
 
 safety_settings = [
@@ -38,76 +39,96 @@ questions = [
     "Date of Birth (DOB): When is your birthday?"
 ]
 
-def check_if_question(response, question):
+def is_question(response):
     try:
         ask = convo.send_message(f"Do you think '{response}' is a question? Type 'yes' or 'no'.")
         response = ask.text.strip()
-        print(response)
-        if "yes" in response.lower():
-            return True
-        else:
-            table[question] = response
-
+        print(f"is_question: {response}")
+        return "yes" in response.lower()
     except ResourceExhausted:
         print("API quota exceeded. Retrying in 60 seconds...")
         time.sleep(60)
+        return is_question(response)
 
-def check_if_understandable(response, question):
+def is_understandable(response, question):
     try:
-        ask = convo.send_message(f"Is the following response {response} understandable? for the question {question}'. Type 'yes' or 'no'.")
+        ask = convo.send_message(f"Is the following response '{response}' understandable for the question '{question}'? Type 'yes' or 'no'.")
         response = ask.text.strip()
-        print(response)
-        if "yes" in response.lower():
-            return True
-        else:
-            table[question] = response
-    
+        print(f"is_understandable: {response}")
+        return "yes" in response.lower()
     except ResourceExhausted:
         print("API quota exceeded. Retrying in 60 seconds...")
         time.sleep(60)
-    
+        return is_understandable(response, question)
+
+def is_answer(response, question):
+    try:
+        ask = convo.send_message(f"Does the response '{response}' appropriately answer the question '{question}'? Type 'yes' or 'no'.")
+        response = ask.text.strip()
+        print(f"if_answer: {response}")
+        return "yes" in response.lower()
+    except ResourceExhausted:
+        print("API quota exceeded. Retrying in 60 seconds...")
+        time.sleep(60)
+        return is_answer(response, question)
+
+def human_like_delay():
+    time.sleep(random.uniform(1, 3)) 
 
 def gather_patient_info():
     i = 0
     while i < len(questions):
         print(f'\nQuestion: {questions[i]}')
         response = input('Your Response: ').strip()
+        human_like_delay()
+
         while True:
-            if check_if_question(response, questions[i]):
+            if is_question(response):
                 try:
-                    ai_response = convo.send_message(f"The patient asked a question: '{response}'. Please respond to it.")
+                    ai_response = convo.send_message(f"The patient asked a question: '{response} for the question: {questions[i]}'. Please respond to it in the context of kidney health.")
+                    human_like_delay()
                     print(f"AI Response: {ai_response.text.strip()}")
                     response = input('Your Response: ').strip()
-                except ResourceExhausted:
-                    print("API quota exceeded. Retrying in 60 seconds...")
-                    time.sleep(60)
-                    continue
-
-            elif not check_if_understandable(response, questions[i]):
-                try:
-                    ai_response = convo.send_message(f"The patient responded '{response}' for the question: {questions[i]}. Ask a follow-up question to clarify.")
-                    print(f"AI Response: {ai_response.text.strip()}")
-                    response = input('Your Response: ').strip()
+                    human_like_delay()
                     continue
                 except ResourceExhausted:
                     print("API quota exceeded. Retrying in 60 seconds...")
                     time.sleep(60)
                     continue
 
-            elif not check_if_question(response, questions[i]) or check_if_understandable(response, questions[i]):
-                table[questions[i]] = response
-                break
-                
-            else:
+            if not is_understandable(response, questions[i]):
                 try:
-                    ai_response = convo.send_message(f"The patient responded '{response}' for the question: '{questions[i]}'. Please provide a suitable follow-up or response in the context of kidney health. The patient has a kidney failure.")
+                    ai_response = convo.send_message(f"The patient responded '{response}' for the question: '{questions[i]}'. Please ask a follow-up question to clarify.")
+                    human_like_delay()
                     print(f"AI Response: {ai_response.text.strip()}")
                     response = input('Your Response: ').strip()
+                    human_like_delay()
+                    continue
                 except ResourceExhausted:
                     print("API quota exceeded. Retrying in 60 seconds...")
                     time.sleep(60)
                     continue
+
+            if not is_answer(response, questions[i]):
+                try:
+                    ai_response = convo.send_message(f"The patient responded '{response}' for the question: '{questions[i]}'. Please ask a follow-up question to clarify.")
+                    human_like_delay()
+                    print(f"AI Response: {ai_response.text.strip()}")
+                    response = input('Your Response: ').strip()
+                    human_like_delay()
+                    continue
+                except ResourceExhausted:
+                    print("API quota exceeded. Retrying in 60 seconds...")
+                    time.sleep(60)
+                    continue
+
+            table[questions[i]] = response
+            break
+
         i += 1
 
+    print("\nSummary of Patient Information:")
+    for key, value in table.items():
+        print(f"{key}: {value}")
+
 gather_patient_info()
-print(table)

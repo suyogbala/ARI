@@ -113,3 +113,4 @@ Wedbesday - June 19
 12:00 pm - working on the patient input
 01:00 pm - improving patient info
 02:00 pm - working on patient response
+02-04 pm - added is_answer and human_like _delay function

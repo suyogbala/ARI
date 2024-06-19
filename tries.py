@@ -30,7 +30,7 @@ responses = []
 
 table = {}
 questions = [
-    "Admit Date: When did you start seeing your current doctor?",
+    "Admit Date: When did you get admit at the hospital?",
     "Nephrologist: Who is your kidney doctor?",
     "Frame Size: How would you describe your body frame? (Options: Small - 5 to 5.7 ft, Medium - 5.8 to 5.11 ft, Large - over 6 ft)",
     "Height: How tall are you?",
@@ -65,7 +65,7 @@ def is_answer(response, question):
     try:
         ask = convo.send_message(f"Does the response '{response}' appropriately answer the question '{question}'? Type 'yes' or 'no'.")
         response = ask.text.strip()
-        print(f"if_answer: {response}")
+        print(f"is_answer: {response}")
         return "yes" in response.lower()
     except ResourceExhausted:
         print("API quota exceeded. Retrying in 60 seconds...")
@@ -94,7 +94,7 @@ def gather_patient_info():
                 except ResourceExhausted:
                     print("API quota exceeded. Retrying in 60 seconds...")
                     time.sleep(60)
-                    continue
+                    return is_question(response)
 
             if not is_understandable(response, questions[i]):
                 try:
@@ -107,7 +107,7 @@ def gather_patient_info():
                 except ResourceExhausted:
                     print("API quota exceeded. Retrying in 60 seconds...")
                     time.sleep(60)
-                    continue
+                    return not is_understandable(response, questions[i])
 
             if not is_answer(response, questions[i]):
                 try:
@@ -120,7 +120,7 @@ def gather_patient_info():
                 except ResourceExhausted:
                     print("API quota exceeded. Retrying in 60 seconds...")
                     time.sleep(60)
-                    continue
+                    return not is_answer(response, questions[i])
 
             table[questions[i]] = response
             break

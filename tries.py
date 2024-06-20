@@ -79,7 +79,21 @@ appetite_gi_assessment_ques = [
     "Symptom Treatments:\nHow are these symptoms being treated?\n☐ No treatments\n☐ Diet\n☐ Over-the-counter medications\n☐ Prescribed medications"
 ]
 
-all_questions = [patient_info, nutition_assessment_ques, medications_coverage_ques, dental_swallowing_ques, appetite_gi_assessment_ques]
+functional_capacity_ques = [
+    "Adequate Cooking Facilities:\nDo you have what you need to cook at home?\n☐ Yes\n☐ No",
+    "Grocery Shopping:\nHow do you usually get your groceries?\n☐ I shop myself\n☐ Family helps\n☐ From an extended care facility\n☐ Delivery service\n☐ A caregiver shops for me",
+    "Type of Eater:\nHow would you describe your eating habits?\n☐ I prefer easy cooking\n☐ I grab and go\n☐ I’m hardly ever home\n☐ I like home-cooked meals\n☐ I live in an extended care facility",
+    "Meals Away From Home:\nHow often do you eat out or have meals away from home?\n☐ 1-2 times per week\n☐ 3-4 times per week\n☐ Rarely\n☐ Usually",
+    "Changes in Living Situation Affecting Food Access:\nHas anything changed in your living situation that makes it harder for you to get food?\n☐ Yes\n☐ No",
+    "Food Preparation:\nWho usually prepares your meals?\n☐ I cook myself\n☐ Family cooks\n☐ Extended care facility cooks\n☐ Friends cook\n☐ Meals are delivered to my home",
+    "Activity Level (Exercise equal to 30 minutes):\nHow active are you on a daily basis?\n☐ Inactive\n☐ Light activity\n☐ Active",
+    "Smoker:\nDo you smoke?\n☐ Yes\n☐ No",
+    "Alcohol Use:\nDo you drink alcohol?\n☐ Yes\n☐ No",
+    "Drug Use:\nDo you use any recreational drugs?\n☐ Yes\n☐ No",
+    "Functional Capacity:\nHow would you describe your ability to perform daily activities?\n☐ Fully functional\n☐ Some loss of stamina\n☐ Severe"
+]
+
+all_questions = [patient_info, nutition_assessment_ques, medications_coverage_ques, dental_swallowing_ques, appetite_gi_assessment_ques, functional_capacity_ques]
 
 def is_question(response):
     try:
@@ -118,7 +132,7 @@ def human_like_delay():
     time.sleep(random.uniform(1, 3)) 
 
 def gather_patient_info():
-    for part_question in all_questions[3:]:
+    for part_question in all_questions:
         i = 0
         while i < len(part_question):
             try:
@@ -177,9 +191,19 @@ def gather_patient_info():
                     break
 
             i += 1
-
-    print("\nSummary of Patient Information:")
-    for key, value in table.items():
-        print(f"{key}: {value}")
-
+    
+def summary(table):
+    all_answers = ''
+    for question, answer in table.items():
+        try:
+            ask = convo.send_message(f"{question} is the question, and {answer} is the answer for that question. Now I want you to understand that and create me a sentence of that.")
+            sentence = ask.text.strip()
+            all_answers += sentence
+        except ResourceExhausted:
+            print("API quota exceeded. Retrying in 30 seconds...")
+            time.sleep(30)
+            continue
+    
+    final_summary = convo.send_message(f"Use the information {sentence} provided to tailor and adjust a patient dialysis treatment to suite their specific needs")
+    print(final_summary)
 gather_patient_info()

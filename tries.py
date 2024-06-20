@@ -32,23 +32,19 @@ table = {}
 
 patient_info = [
     "Admit Date:\nWhen did you get admit at the hospital?",
+    "Date of Birth (DOB):\nWhen is your birthday?",
     "Nephrologist:\nWho is your kidney doctor?",
     "Frame Size:\nHow would you describe your body frame? How big you are? Depending on height and weight(Options: Small - 5 to 5.7 ft, Medium - 5.8 to 5.11 ft, Large - over 6 ft)",
     "Height:\nHow tall are you?",
     "Weight Assessment:\nSince your last visit, has your weight increased, decreased, or stayed the same? (Options: Increased, Decreased, Stayed the same)",
     "Target Weight (TW):\nWhat is your target weight according to your doctor?",
-    "Date of Birth (DOB):\nWhen is your birthday?"
 ]
 
 nutition_assessment_ques = [
     "Current Weight:\nWhat is your current weight?",
-    "Recent Weight Changes:\nHas your weight recently:\n☐ Increased\n☐ Decreased\n☐ Stayed the same",
-    "Usual Body Weight (UBW):\nWhat is your typical weight on most days?",
     "Standard Body Weight Index (SBWI):\nDo you know your standard body weight index?",
-    "Ideal Body Weight (IBW):\nWhat is your goal weight?",
     "Dietitian:\nDo you have a dietitian? If yes, what's their name?",
     "Amputee:\nHave you had any amputations?\n☐ Yes\n☐ No\nIf yes, what is your adjusted body weight?",
-    "Weight Change:\nIf your weight has changed, how much and over what time period?",
     "Medications:\nWhat medications are you currently taking for your kidneys or other conditions?",
     "Diet Intake (past 2 weeks):\nHow would you describe your diet over the past two weeks?\n☐ Good\n☐ Borderline\n☐ Poor",
     "Intake Compared to Usual Meal:\nHow much of your usual meal are you eating?\n☐ 100% (all)\n☐ 75-99%\n☐ 50-75% but increasing\n☐ 50-75% with no change or decreasing\n☐ <50% but increasing\n☐ <50% with no change or decreasing\n☐ ≤ 25% (very little)",
@@ -60,7 +56,14 @@ nutition_assessment_ques = [
     "Food Stamps/Food Program:\nAre you on any food stamps or food assistance programs?\n☐ Yes\n☐ No"
 ]
 
-all_questions = [patient_info, nutition_assessment_ques]
+medications_coverage_ques = [
+    "Medications:\nWhat medications are you taking right now?",
+    "Coverage:\nHow is your medication coverage?\n☐ Full\n☐ Limited/No coverage",
+    "Bundled:\nAre your medications included in your overall care package?\n☐ Yes\n☐ No",
+    "Prior Diet Counseling:\nHave you had any advice or counseling about your diet before?\n☐ Yes\n☐ No\nIf yes, who gave you the advice?",
+    "Previous Diet(s):\nWhat types of diets have you tried in the past?"
+]
+all_questions = [patient_info, nutition_assessment_ques, medications_coverage_ques]
 
 def is_question(response):
     try:
@@ -99,11 +102,11 @@ def human_like_delay():
     time.sleep(random.uniform(1, 3)) 
 
 def gather_patient_info():
-    for part_question in all_questions:
+    for part_question in all_questions[2:]:
         i = 0
         while i < len(part_question):
             try:
-                new = convo.send_message(f"Please ask this question {part_question[i]} in friendly way. You can make your own question.")
+                new = convo.send_message(f"Please ask this question {part_question[i]} in a human way so that patient understands it in a friendly way.")
                 print(f'\nQuestion: {new.text.strip()}')
                 response = input('Your Response: ').strip()
                 human_like_delay()

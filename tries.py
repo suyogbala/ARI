@@ -63,7 +63,23 @@ medications_coverage_ques = [
     "Prior Diet Counseling:\nHave you had any advice or counseling about your diet before?\n☐ Yes\n☐ No\nIf yes, who gave you the advice?",
     "Previous Diet(s):\nWhat types of diets have you tried in the past?"
 ]
-all_questions = [patient_info, nutition_assessment_ques, medications_coverage_ques]
+
+dental_swallowing_ques = [
+    "Dental Status:\nHow are your teeth and gums?\n☐ Own teeth\n☐ Dentures\n☐ Toothache\n☐ Missing teeth\n☐ Gum problems\n☐ Chewing difficulty\n☐ Bridge/Partial",
+    "Access to a Dentist:\nDo you have access to a dentist?\n☐ Yes\n☐ No",
+    "Appointment Scheduled:\nDo you have an upcoming dentist appointment?\n☐ Yes\n☐ No",
+    "Difficulty Swallowing:\nDo you have any trouble swallowing your food?\n☐ Yes\n☐ No"
+]
+
+appetite_gi_assessment_ques = [
+    "Current Appetite:\nOn a scale of 1 (worst) to 10 (best), how would you rate your current appetite?",
+    "Appetite Trend:\nHas your appetite changed recently?\n☐ No change\n☐ Declining\n☐ Improving",
+    "GI Symptoms (> 2 weeks):\nHave you had any of these symptoms for more than 2 weeks?\n☐ Nausea/Vomiting\n☐ Constipation/Diarrhea\n☐ Obesity\n☐ Heartburn\n☐ Pica (craving non-food items)\n☐ Hiccups\n☐ Indigestion\n☐ Altered/Metallic taste\n☐ GI Ulcer\n☐ Abdominal pain\n☐ Blood in stool\n☐ Colostomy\n☐ Anorexia (loss of appetite)\n☐ Coffee ground emesis (vomiting with a coffee ground appearance)\n☐ TPN/IDPN/IPN (special nutritional feeding methods)\n☐ Tube feeding\n☐ Other:\n☐ No identified problems",
+    "Frequency of Symptoms:\nHow often do you experience these symptoms?\n☐ Very few (1x per day)\n☐ Some (2-3x per day) - Improving\n☐ Some (2-3x per day) - No change\n☐ Some (2-3x per day) - Getting worse\n☐ Frequent (>3x per day)\n☐ Constant (All day)",
+    "Symptom Treatments:\nHow are these symptoms being treated?\n☐ No treatments\n☐ Diet\n☐ Over-the-counter medications\n☐ Prescribed medications"
+]
+
+all_questions = [patient_info, nutition_assessment_ques, medications_coverage_ques, dental_swallowing_ques, appetite_gi_assessment_ques]
 
 def is_question(response):
     try:
@@ -102,7 +118,7 @@ def human_like_delay():
     time.sleep(random.uniform(1, 3)) 
 
 def gather_patient_info():
-    for part_question in all_questions[2:]:
+    for part_question in all_questions[3:]:
         i = 0
         while i < len(part_question):
             try:

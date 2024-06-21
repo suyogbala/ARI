@@ -134,3 +134,5 @@ Friday - June 21
 12:00 pm - working to handle error
 01:00 pm - working with the new gen AI code
 02:00 pm - learning Vertex AI
+03:00 pm - learning flask
+04:00 pm - fixing the gemini for better result

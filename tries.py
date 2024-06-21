@@ -1,10 +1,23 @@
+import os
 import time
 import random
+from google.oauth2 import service_account
+from google.cloud import aiplatform
 import google.generativeai as genai
 from google.api_core.exceptions import ResourceExhausted
 
-genai.configure(api_key="AIzaSyBSV0XbpWUbxE0qmrTxZlqd1o2VJKpWfYA")
+# Set the path to your service account key file
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/Users/suyogbala/documents/codinglanguages/python.py/ARI_Timesheet/peaceful-signer-427117-m6-517775fa497c.json"
 
+# Initialize the Vertex AI client
+project_id = "peaceful-signer-427117-m6"  # Replace with your Google Cloud project ID
+location = "us-central1"
+aiplatform.init(project=project_id, location=location)
+
+# Configure the genai API with your API key
+genai.configure(api_key="AIzaSyBSV0XbpWUbxE0qmrTxZlqd1o2VJKpWfYA")  # Replace with your Generative AI API key
+
+# Define the generation configuration
 generation_config = {
     "temperature": 0.7,
     "top_p": 0.9,
@@ -12,6 +25,7 @@ generation_config = {
     "max_output_tokens": 200,
 }
 
+# Define the safety settings
 safety_settings = [
     {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_MEDIUM_AND_ABOVE"},
     {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_MEDIUM_AND_ABOVE"},
@@ -19,12 +33,14 @@ safety_settings = [
     {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_MEDIUM_AND_ABOVE"},
 ]
 
+# Initialize the model
 model = genai.GenerativeModel(
     model_name="gemini-1.5-pro-latest",
     generation_config=generation_config,
     safety_settings=safety_settings
 )
 
+# Start a new conversation
 convo = model.start_chat(history=[])
 responses = []
 

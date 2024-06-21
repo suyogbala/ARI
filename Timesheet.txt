@@ -131,3 +131,4 @@ Thrusday - June 20
 
 Friday - June 21
 11:00 am - working on making website
+12:00 pm - working to handle error

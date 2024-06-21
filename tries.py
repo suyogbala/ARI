@@ -6,10 +6,6 @@ from google.cloud import aiplatform
 import google.generativeai as genai
 from google.api_core.exceptions import ResourceExhausted
 
-# Configure the genai API with your API key
-genai.configure(api_key="AIzaSyBSV0XbpWUbxE0qmrTxZlqd1o2VJKpWfYA")  # Replace with your Generative AI API key
-
-# Define the generation configuration
 generation_config = {
     "temperature": 0.7,
     "top_p": 0.9,

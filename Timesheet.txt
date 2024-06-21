@@ -136,3 +136,4 @@ Friday - June 21
 02:00 pm - learning Vertex AI
 03:00 pm - learning flask
 04:00 pm - fixing the gemini for better result
+05:00 pm - fixing terminal for secret and api keys

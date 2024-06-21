@@ -12,7 +12,6 @@ generation_config = {
     "top_k": 50,
     "max_output_tokens": 200,
 }
-s
 
 # Define the safety settings
 safety_settings = [

@@ -6,14 +6,6 @@ from google.cloud import aiplatform
 import google.generativeai as genai
 from google.api_core.exceptions import ResourceExhausted
 
-# Set the path to your service account key file
-
-
-# Initialize the Vertex AI client
-project_id = "peaceful-signer-427117-m6"  # Replace with your Google Cloud project ID
-location = "us-central1"
-aiplatform.init(project=project_id, location=location)
-
 # Configure the genai API with your API key
 genai.configure(api_key="AIzaSyBSV0XbpWUbxE0qmrTxZlqd1o2VJKpWfYA")  # Replace with your Generative AI API key
 

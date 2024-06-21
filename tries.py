@@ -7,7 +7,7 @@ import google.generativeai as genai
 from google.api_core.exceptions import ResourceExhausted
 
 # Set the path to your service account key file
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/Users/suyogbala/documents/codinglanguages/python.py/ARI_Timesheet/peaceful-signer-427117-m6-517775fa497c.json"
+
 
 # Initialize the Vertex AI client
 project_id = "peaceful-signer-427117-m6"  # Replace with your Google Cloud project ID

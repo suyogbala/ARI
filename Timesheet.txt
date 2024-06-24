@@ -143,3 +143,4 @@ Monday - June 24
 11:00 - fixing API errors
 12:00 - learning flask
 01:00 - working on the prompt
+02:00 - asking follow-up response better

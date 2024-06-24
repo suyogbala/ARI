@@ -141,3 +141,4 @@ Friday - June 21
 
 Monday - June 24
 11:00 - fixing API errors
+12:00 - learning flask

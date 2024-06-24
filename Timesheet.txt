@@ -138,3 +138,6 @@ Friday - June 21
 04:00 pm - fixing the gemini for better result
 05:00 pm - fixing terminal for secret and api keys
 09:00 pm - learning html/css
+
+Monday - June 24
+11:00 - fixing API errors

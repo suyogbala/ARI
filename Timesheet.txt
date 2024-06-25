@@ -152,3 +152,4 @@ Monday - June 24
 Tuesday - June 25
 11:00 am - learning flask
 12:00 pm - working on the prompt
+01:00 pm - making vertex AI work

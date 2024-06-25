@@ -120,7 +120,7 @@ def is_understandable(response, question):
 
 def is_answer(response, question):
     try:
-        ask = convo.send_message(f"Does the response '{response}' appropriately answer the question '{question}'? Type 'yes' or 'no'.")
+        ask = convo.send_message(f"Does the response '{response}' provies answer to the question '{question}'? Type 'yes' or 'no'.")
         response = ask.text.strip()
         print(f"is_answer: {response}")
         return "yes" in response.lower()

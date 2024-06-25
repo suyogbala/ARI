@@ -150,4 +150,5 @@ Monday - June 24
 08:00 - working on the response
 
 Tuesday - June 25
-11:00 - learning flask
+11:00 am - learning flask
+12:00 pm - working on the prompt

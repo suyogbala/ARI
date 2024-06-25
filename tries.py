@@ -1,19 +1,18 @@
-import os
 import time
-import random
-from google.oauth2 import service_account
-from google.cloud import aiplatform
 import google.generativeai as genai
 from google.api_core.exceptions import ResourceExhausted
+import random
+
+genai.configure(api_key="AIzaSyBSV0XbpWUbxE0qmrTxZlqd1o2VJKpWfYA")
+
 
 generation_config = {
-    "temperature": 0.7,
-    "top_p": 0.9,
-    "top_k": 50,
-    "max_output_tokens": 200,
+    "temperature": 1,
+    "top_p": 0.95,
+    "top_k": 64,
+    "max_output_tokens": 8192,
 }
 
-# Define the safety settings
 safety_settings = [
     {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_MEDIUM_AND_ABOVE"},
     {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_MEDIUM_AND_ABOVE"},
@@ -21,14 +20,12 @@ safety_settings = [
     {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_MEDIUM_AND_ABOVE"},
 ]
 
-# Initialize the model
+
 model = genai.GenerativeModel(
     model_name="gemini-1.5-pro-latest",
     generation_config=generation_config,
     safety_settings=safety_settings
 )
-
-# Start a new conversation
 convo = model.start_chat(history=[])
 responses = []
 
@@ -152,7 +149,7 @@ def gather_patient_info():
             while True:
                 if not is_answer(response, part_question[i]):
                     try:
-                        ai_response = convo.send_message(f"The patient responded '{response}' for the question: '{part_question[i]}'. Please ask a follow-up question to clarify.")
+                        ai_response = convo.send_message(f"The patient responded '{response}' for the question: '{part_question[i]}'. Please tell the patient what you meant by the question, and Please ask a follow-up question to clarify.")
                         human_like_delay()
                         print(f"AI Response: {ai_response.text.strip()}")
                         response = input('Your Response: ').strip()

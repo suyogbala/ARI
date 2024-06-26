@@ -156,3 +156,4 @@ Tuesday - June 25
 02:00 pm - meeting
 03:00 pm - working to fix vertex AI
 04:00 pm - testing AI 
+05:00 pm - learning flask

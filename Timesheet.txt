@@ -163,3 +163,4 @@ Wednesday - June 26
 11:00 am - learning flask 
 12:00 pm - working on the prompt
 01:00 pm - working on AI 
+02:00 pm - making prmopt better

@@ -166,3 +166,4 @@ Wednesday - June 26
 02:00 pm - making prmopt better
 03:00 pm - working on the prompt
 04:00 pm - fixing vertex API
+05:00 pm - working on vertex AI

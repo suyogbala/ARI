@@ -170,3 +170,4 @@ Wednesday - June 26
 
 Thrusday - June 27
 11:00 am - working on the prompt
+12:00 pm - working on the vertex AI

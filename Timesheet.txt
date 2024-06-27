@@ -167,3 +167,6 @@ Wednesday - June 26
 03:00 pm - working on the prompt
 04:00 pm - fixing vertex API
 05:00 pm - working on vertex AI
+
+Thrusday - June 27
+11:00 am - working on the prompt

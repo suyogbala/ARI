@@ -1,33 +1,42 @@
-import time
 import google.generativeai as genai
-from google.api_core.exceptions import ResourceExhausted
+import time
 import random
 
 genai.configure(api_key="AIzaSyBSV0XbpWUbxE0qmrTxZlqd1o2VJKpWfYA")
 
 generation_config = {
-    "temperature": 1,
-    "top_p": 0.95,
-    "top_k": 64,
-    "max_output_tokens": 8192,
+  "temperature": 1,
+  "top_p": 0.95,
+  "top_k": 64,
+  "max_output_tokens": 8192,
 }
 
 safety_settings = [
-    {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_MEDIUM_AND_ABOVE"},
-    {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_MEDIUM_AND_ABOVE"},
-    {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_MEDIUM_AND_ABOVE"},
-    {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_MEDIUM_AND_ABOVE"},
+  {
+    "category": "HARM_CATEGORY_HARASSMENT",
+    "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+  },
+  {
+    "category": "HARM_CATEGORY_HATE_SPEECH",
+    "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+  },
+  {
+    "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+    "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+  },
+  {
+    "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
+    "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+  },
 ]
 
+model = genai.GenerativeModel(model_name="gemini-1.5-pro-latest",
+                              generation_config=generation_config,
+                              safety_settings=safety_settings)
 
-model = genai.GenerativeModel(
-    model_name="gemini-1.5-pro-latest",
-    generation_config=generation_config,
-    safety_settings=safety_settings
-)
 convo = model.start_chat(history=[])
-responses = []
 
+responses = []
 table = {}
 
 patient_info = [
@@ -97,7 +106,7 @@ all_questions = [patient_info, nutition_assessment_ques, medications_coverage_qu
 
 def is_question(response):
     try:
-        ask = convo.send_message(f"Do you think '{response}' is a question? Type 'yes' or 'no'.")
+        ask = model.generate_content(f"Do you think '{response}' is a question? Type 'yes' or 'no'.")
         response = ask.text.strip()
         print(f"is_question: {response}")
         return "yes" in response.lower()
@@ -108,7 +117,7 @@ def is_question(response):
 
 def is_understandable(response, question):
     try:
-        ask = convo.send_message(f"Is the following response '{response}' understandable for the question '{question}'? Type 'yes' or 'no'.")
+        ask = model.generate_content(f"Is the following response '{response}' understandable for the question '{question}'? Type 'yes' or 'no'.")
         response = ask.text.strip()
         print(f"is_understandable: {response}")
         return "yes" in response.lower()
@@ -119,7 +128,7 @@ def is_understandable(response, question):
 
 def is_answer(response, question):
     try:
-        ask = convo.send_message(f"Does the response '{response}' provies answer to the question '{question}'? Type 'yes' or 'no'.")
+        ask = model.generate_content(f"Does the response '{response}' provies answer to the question '{question}'? Type 'yes' or 'no'.")
         response = ask.text.strip()
         print(f"is_answer: {response}")
         return "yes" in response.lower()
@@ -136,7 +145,7 @@ def gather_patient_info():
         i = 0
         while i < len(part_question):
             try:
-                new = convo.send_message(f"Please ask this question {part_question[i]} in a human way so that patient understands it in a friendly way.")
+                new = model.generate_content(f"Please ask this question {part_question[i]} in a human way so that patient understands it in a friendly way.")
                 print(f'\nQuestion: {new.text.strip()}')
                 response = input('Your Response: ').strip()
                 human_like_delay()
@@ -148,7 +157,7 @@ def gather_patient_info():
             while True:
                 if not is_answer(response, part_question[i]):
                     try:
-                        ai_response = convo.send_message(f"The patient responded '{response}' for the question: '{part_question[i]}'. Please tell the patient what you meant by the question, and Please ask a follow-up question to clarify.")
+                        ai_response = model.generate_content(f"The patient responded '{response}' for the question: '{part_question[i]}'. Please tell the patient what you meant by the question, and Please ask a follow-up question to clarify.")
                         human_like_delay()
                         print(f"AI Response: {ai_response.text.strip()}")
                         response = input('Your Response: ').strip()
@@ -161,7 +170,7 @@ def gather_patient_info():
                     
                 elif is_question(response):
                     try:
-                        ai_response = convo.send_message(f"The patient asked a question: '{response} for the question: {part_question[i]}'. Please respond to it in the context of kidney health.")
+                        ai_response = model.generate_content(f"The patient asked a question: '{response} for the question: {part_question[i]}'. Please respond to it in the context of kidney health.")
                         human_like_delay()
                         print(f"AI Response: {ai_response.text.strip()}")
                         response = input('Your Response: ').strip()
@@ -174,7 +183,7 @@ def gather_patient_info():
                     
                 elif not is_understandable(response, part_question[i]):
                     try:
-                        ai_response = convo.send_message(f"The patient responded '{response}' for the question: '{part_question[i]}'. Please ask a follow-up question to clarify.")
+                        ai_response = model.generate_content(f"The patient responded '{response}' for the question: '{part_question[i]}'. Please ask a follow-up question to clarify.")
                         human_like_delay()
                         print(f"AI Response: {ai_response.text.strip()}")
                         response = input('Your Response: ').strip()
@@ -196,7 +205,7 @@ def summary(table):
     all_answers = ''
     for question, answer in table.items():
         try:
-            ask = convo.send_message(f"{question} is the question, and {answer} is the answer for that question. Now I want you to understand that and create me a sentence of that.")
+            ask = model.generate_content(f"{question} is the question, and {answer} is the answer for that question. Now I want you to understand that and create me a sentence of that.")
             sentence = ask.text.strip()
             all_answers += sentence
         except ResourceExhausted:
@@ -204,6 +213,6 @@ def summary(table):
             time.sleep(30)
             continue
     
-    final_summary = convo.send_message(f"Use the information {sentence} provided to tailor and adjust a patient dialysis treatment to suite their specific needs")
+    final_summary = model.generate_content(f"Use the information {sentence} provided to tailor and adjust a patient dialysis treatment to suite their specific needs")
     print(final_summary)
 gather_patient_info()

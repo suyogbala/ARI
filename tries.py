@@ -135,7 +135,7 @@ def gather_patient_info():
             response = input('Your Response: ').strip()
             human_like_delay()
             new_hashmap = {}
-            all_ans = ''
+            new_hashmap[new] = 
             while True:
                 if not is_answer(response, part_question[i]):
                         ai_response = convo.send_message(f"The patient responded '{response}' for the question: '{part_question[i]}'. Please tell the patient what you meant by the question, and Please ask a follow-up question to clarify.")
@@ -144,6 +144,9 @@ def gather_patient_info():
                         response = input('Your Response: ').strip()
                         new_hashmap[ai_response] = response
                         human_like_delay()
+                        while True:
+                              for ques, ans in new_hashmap.items():
+                                    
 
                 elif is_question(response):
                         ai_response = convo.send_message(f"The patient asked a question: '{response} for the question: {part_question[i]}'. Please respond to it in the context of kidney health.")
@@ -152,15 +155,13 @@ def gather_patient_info():
                         response = input('Your Response: ').strip()
                         human_like_delay()
 
-                    
                 elif not is_understandable(response, part_question[i]):
                         ai_response = convo.send_message(f"The patient responded '{response}' for the question: '{part_question[i]}'. Please ask a follow-up question to clarify.")
                         human_like_delay()
                         print(f"AI Response: {ai_response.text.strip()}")
                         response = input('Your Response: ').strip()
                         human_like_delay()
-
-
+                        new_hashmap[ai_response] = response
 
                 else:
                     table[part_question[i]] = response

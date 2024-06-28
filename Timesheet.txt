@@ -184,3 +184,4 @@ Friday - June 28
 01:00 pm - collecting the response from the patient
 02:00 pm - adding new hashmap
 03:00 pm - working on the prompt
+04:00 pm - adding all responses on one

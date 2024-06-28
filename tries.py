@@ -135,18 +135,28 @@ def gather_patient_info():
             response = input('Your Response: ').strip()
             human_like_delay()
             new_hashmap = {}
-            new_hashmap[new] = 
+            new_hashmap[new] = response
+            all_ques_ans = []
+            answers = response
+            all_ans = response
             while True:
-                if not is_answer(response, part_question[i]):
+                if not is_answer(all_ans, part_question[i]):
                         ai_response = convo.send_message(f"The patient responded '{response}' for the question: '{part_question[i]}'. Please tell the patient what you meant by the question, and Please ask a follow-up question to clarify.")
                         human_like_delay()
                         print(f"AI Response: {ai_response.text.strip()}")
                         response = input('Your Response: ').strip()
                         new_hashmap[ai_response] = response
                         human_like_delay()
-                        while True:
-                              for ques, ans in new_hashmap.items():
-                                    
+                        for ques, ans in new_hashmap.items():
+                              all_ques_ans.append([ques, ans])
+                        
+                        for _ in all_ques_ans:
+                              asking = convo.send_message(f"This is the answer; {_[1]} for the question: {_[0]}. Give me a simple sentences for this.")
+                              answers += asking.text.strip()
+                        
+                        final = convo.send_message(f"From these {answers}, write me a simple answer for the question {part_question[i]}")
+                        all_ans = final.text.strip()
+                              
 
                 elif is_question(response):
                         ai_response = convo.send_message(f"The patient asked a question: '{response} for the question: {part_question[i]}'. Please respond to it in the context of kidney health.")
@@ -155,7 +165,7 @@ def gather_patient_info():
                         response = input('Your Response: ').strip()
                         human_like_delay()
 
-                elif not is_understandable(response, part_question[i]):
+                elif not is_understandable(all_ans, part_question[i]):
                         ai_response = convo.send_message(f"The patient responded '{response}' for the question: '{part_question[i]}'. Please ask a follow-up question to clarify.")
                         human_like_delay()
                         print(f"AI Response: {ai_response.text.strip()}")

@@ -189,3 +189,4 @@ Friday - June 28
 
 Sunday - June 30
 10:00 pm - working ont he prompt
+11:00 pm - learning flask

@@ -149,8 +149,8 @@ def gather_patient_info():
                         
                         final = convo.send_message(f"From these {answers}, write me a one answer that states the patient response for the question {part_question[i]}")
                         all_ans = final.text.strip()
-                        print("#####")
                         print(all_ans)
+                        print("#####")
                         count += 1
 
                 # elif not is_understandable(all_ans, part_question[i]):
@@ -177,6 +177,8 @@ def gather_patient_info():
 
                 else:
                     table[part_question[i]] = all_ans
+                    ask = convo.send_message(f"{part_question[i]} is the question, and {all_ans} is the answer for that question. Now I want you to understand that and create me a sentence of that.")
+                    print(ask.text.strip())
                     break
 
             i += 1

@@ -199,3 +199,4 @@ Monday - July 1
 03:00 pm - working on the response
 04:00 pm - learining full stack
 05:00 pm - learining full stack
+06:00 pm = working on the prompt

@@ -203,3 +203,6 @@ Monday - July 1
 
 Tuesday - July 2
 5:00 pm - tried new things, prompts
+
+Wednesday - July 3
+11:00 - learning flask

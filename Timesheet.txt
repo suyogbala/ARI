@@ -205,4 +205,6 @@ Tuesday - July 2
 5:00 pm - tried new things, prompts
 
 Wednesday - July 3
-11:00 - learning flask
+11:00 pm - learning flask
+12:00 pm - learning javascript
+01:00 pm - testing the response

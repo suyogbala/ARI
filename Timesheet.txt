@@ -208,3 +208,5 @@ Wednesday - July 3
 11:00 pm - learning flask
 12:00 pm - learning javascript
 01:00 pm - testing the response
+02:00 pm - added function that checks if the patient doesn't remember anything
+03:00 pm - trying with the response

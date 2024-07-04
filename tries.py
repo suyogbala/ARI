@@ -105,7 +105,7 @@ functional_capacity_ques = [
 all_questions = [patient_info, nutition_assessment_ques, medications_coverage_ques, dental_swallowing_ques, appetite_gi_assessment_ques, functional_capacity_ques]
 
 def is_understandable(response, question):
-        ask = convo.send_message(f"When the patient responded with '{response}' to the question '{question}', does this response indicate that the patient is not sure or lacks confidence in their answer? Type 'yes' or 'no'.")
+        ask = convo.send_message(f"When the patient responded with '{response}' to the question '{question}', does this response indicate that the patient is not sure in their answer? Type 'yes' or 'no'.")
         response = ask.text.strip()
         print(f"is_understandable: {response}")
         return "yes" in response.lower()

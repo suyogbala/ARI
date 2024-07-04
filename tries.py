@@ -104,17 +104,17 @@ functional_capacity_ques = [
 
 all_questions = [patient_info, nutition_assessment_ques, medications_coverage_ques, dental_swallowing_ques, appetite_gi_assessment_ques, functional_capacity_ques]
 
-def is_understandable(response, question):
-        ask = convo.send_message(f"When the patient responded with '{response}' to the question '{question}', does this response indicate that the patient is not sure in their answer? Type 'yes' or 'no'.")
-        response = ask.text.strip()
-        print(f"is_understandable: {response}")
-        return "yes" in response.lower()
+def is_unsure(response, question):
+    ask = convo.send_message(f"When the patient responded with '{response}' to the question '{question}', does this response indicate that the patient is not sure in their answer? Type 'yes' or 'no'.")
+    response = ask.text.strip()
+    print(f"is_understandable: {response}")
+    return "yes" in response.lower()
 
 def is_answer(response, question):
-        ask = convo.send_message(f"Does the response '{response}' provies the information we need for the question '{question}'? Type 'yes' or 'no'.")
-        response = ask.text.strip()
-        print(f"is_answer: {response}")
-        return "yes" in response.lower()
+    ask = convo.send_message(f"Does the response '{response}' provies the information we need for the question '{question}'? Type 'yes' or 'no'.")
+    response = ask.text.strip()
+    print(f"is_answer: {response}")
+    return "yes" in response.lower()
 
 def human_like_delay():
     time.sleep(random.uniform(1, 3)) 
@@ -127,53 +127,29 @@ def gather_patient_info():
             print(f'\nQuestion: {new.text.strip()}')
             response = input('Your Response: ').strip()
             human_like_delay()
-            new_hashmap = {}
-            new_hashmap[new] = response
+            new_hashmap = {new: response}
             answers = response
             all_ans = response
-            count = 0
             while True:
+                if is_unsure(response, part_question[i]):
+                    
                 if not is_answer(all_ans, part_question[i]):
-                        if count == 6:
-                              break
-                        ai_response = convo.send_message(f"The patient responded '{all_ans}' for the question: '{part_question[i]}'. Please tell the patient what you meant by the question, and Please ask a follow-up question to clarify.")
-                        human_like_delay()
-                        print(f"AI Response: {ai_response.text.strip()}")
-                        response = input('Your Response: ').strip()
-                        new_hashmap[ai_response] = response
-                        human_like_delay()
+                    ai_response = convo.send_message(f"The patient responded '{all_ans}' for the question: '{part_question[i]}'. Please tell the patient what you meant by the question, and Please ask a follow-up question to clarify.")
+                    human_like_delay()
+                    print(f"AI Response: {ai_response.text.strip()}")
+                    response = input('Your Response: ').strip()
+                    new_hashmap[ai_response] = response
+                    human_like_delay()
                         
-                        for ques, ans in new_hashmap.items():
-                              asking = convo.send_message(f"This is the answer; {ans} for the question: {ques}. write me a one answer that states the patient response for the question ")
-                              answers += asking.text.strip()
+                    for ques, ans in new_hashmap.items():
+                        asking = convo.send_message(f"This is the answer; {ans} for the question: {ques}. write me a one answer that states the patient response for the question ")
+                        answers += asking.text.strip()
                         
-                        final = convo.send_message(f"From these {answers}, write me a one answer that states the patient response for the question {part_question[i]}")
-                        all_ans = final.text.strip()
-                        print(all_ans)
-                        print("#####")
-                        count += 1
-
-                # elif not is_understandable(all_ans, part_question[i]):
-                #         if count == 6:
-                #               break
-                #         ai_response = convo.send_message(f"The patient responded '{all_ans}' for the question: '{part_question[i]}'. Please ask a follow-up question to clarify.")
-                #         human_like_delay()
-                #         print(f"AI Response: {ai_response.text.strip()}")
-                #         response = input('Your Response: ').strip()
-                #         human_like_delay()
-                #         new_hashmap[ai_response] = response
-
-                #         for ques, ans in new_hashmap.items():
-                #               asking = convo.send_message(f"This is the answer: {ans} for the question: {ques}. write me a one answer that states the patient response for the question ")
-                #               answers += asking.text.strip()
-                        
-                #         final = convo.send_message(f"From these {answers}, write me a one answer that states the patient response for the question {part_question[i]}")
-                #         all_ans = final.text.strip()
-                #         print("#####")
-                #         print(all_ans)
-                #         count += 1
-
-
+                    final = convo.send_message(f"From these {answers}, write me a one answer that states the patient response for the question {part_question[i]}")
+                    all_ans = final.text.strip()
+                    print("#####")
+                
+                
 
                 else:
                     table[part_question[i]] = all_ans
@@ -186,9 +162,9 @@ def gather_patient_info():
 def summary(table):
     all_answers = ''
     for question, answer in table.items():
-            ask = convo.send_message(f"{question} is the question, and {answer} is the answer for that question. Now I want you to understand that and create me a sentence of that.")
-            sentence = ask.text.strip()
-            all_answers += sentence
+        ask = convo.send_message(f"{question} is the question, and {answer} is the answer for that question. Now I want you to understand that and create me a sentence of that.")
+        sentence = ask.text.strip()
+        all_answers += sentence
     
     final_summary = convo.send_message(f"Use the information {sentence} provided to tailor and adjust a patient dialysis treatment to suite their specific needs")
     print(final_summary)

@@ -212,3 +212,6 @@ Wednesday - July 3
 03:00 pm - trying with the response
 04:00 pm - working on the prompt
 05:00 pm - working to handle the unclear question
+
+Thrusday - July 4
+2 - 4 pm - checked the patient response with the code

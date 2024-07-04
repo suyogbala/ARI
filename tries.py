@@ -1,6 +1,7 @@
 import google.generativeai as genai
 import time
 import random
+from datetime import datetime
 
 genai.configure(api_key="AIzaSyBSV0XbpWUbxE0qmrTxZlqd1o2VJKpWfYA")
 
@@ -38,6 +39,7 @@ convo = model.start_chat(history=[])
 
 responses = []
 table = {}
+current_date = datetime.now().strftime("%Y-%m-%d")
 
 patient_info = [
     "Admit Date:\nWhat date did you get admit at the hospital?",
@@ -105,13 +107,13 @@ functional_capacity_ques = [
 all_questions = [patient_info, nutition_assessment_ques, medications_coverage_ques, dental_swallowing_ques, appetite_gi_assessment_ques, functional_capacity_ques]
 
 def is_unsure(response, question):
-    ask = convo.send_message(f"When the patient responded with '{response}' to the question '{question}', does this response indicate that the patient is not sure in their answer? Type 'yes' or 'no'.")
+    ask = convo.send_message(f"When the patient responded with '{response}' to the question '{question}', does this response: {response} indicate that the patient is unsure for the question: {question}? Type 'yes' or 'no'.")
     response = ask.text.strip()
-    print(f"is_understandable: {response}")
+    print(f"is_unsure: {response}")
     return "yes" in response.lower()
 
 def is_answer(response, question):
-    ask = convo.send_message(f"Does the response '{response}' provies the information we need for the question '{question}'? Type 'yes' or 'no'.")
+    ask = convo.send_message(f"Does the response '{response}' provies the information we need for the question '{question}'? Type 'yes' or 'no'. Today's date is {current_date}")
     response = ask.text.strip()
     print(f"is_answer: {response}")
     return "yes" in response.lower()
@@ -128,30 +130,60 @@ def gather_patient_info():
             response = input('Your Response: ').strip()
             human_like_delay()
             new_hashmap = {new: response}
-            answers = response
-            all_ans = response
+            asking = convo.send_message(f"This is the answer; {response} for the question: {part_question[i]}. write me a one answer that states the patient response for the question ")
+            answers = asking.text.strip()
+            all_ans = asking.text.strip()
+            print(all_ans)
+            count = 0
             while True:
-                if is_unsure(response, part_question[i]):
-                    
                 if not is_answer(all_ans, part_question[i]):
-                    ai_response = convo.send_message(f"The patient responded '{all_ans}' for the question: '{part_question[i]}'. Please tell the patient what you meant by the question, and Please ask a follow-up question to clarify.")
-                    human_like_delay()
-                    print(f"AI Response: {ai_response.text.strip()}")
-                    response = input('Your Response: ').strip()
-                    new_hashmap[ai_response] = response
-                    human_like_delay()
-                        
-                    for ques, ans in new_hashmap.items():
-                        asking = convo.send_message(f"This is the answer; {ans} for the question: {ques}. write me a one answer that states the patient response for the question ")
-                        answers += asking.text.strip()
-                        
-                    final = convo.send_message(f"From these {answers}, write me a one answer that states the patient response for the question {part_question[i]}")
-                    all_ans = final.text.strip()
-                    print("#####")
-                
-                
-
-                else:
+                    if is_unsure(all_ans, part_question[i]):
+                        print('First')
+                        prompt = f"""
+                            The patient seems unsure about their answer. The initial question was: "{part_question[i]}"
+                            The patient responded with: "{all_ans}"
+                            Please generate a series of follow-up questions to help the patient recall about the {part_question[i]}. 
+                            Provide only the questions, without any explanations or headers.
+                        """
+                        ai_response = convo.send_message(prompt)
+                        human_like_delay()
+                        questions = ai_response.text.strip().split('\n')
+                        cleaned_questions = [question.strip().lstrip("0123456789. ") for question in questions]
+                        print(cleaned_questions)
+                        for ques in cleaned_questions:
+                            print(f'AI Response: {ques}')
+                            response = input('Your Response: ').strip()
+                            new_hashmap[ques] = response
+                            for ques, ans in new_hashmap.items():
+                                asking = convo.send_message(f"This is the answer; {ans} for the question: {ques}. write me a one answer that states the patient response for the question ")
+                                answers += asking.text.strip()
+                            
+                            final = convo.send_message(f"From these {answers}, write me a one answer that states the patient response for the question {part_question[i]}")
+                            all_ans = final.text.strip()
+                            if is_unsure(all_ans, part_question[i]):
+                                continue
+                            else:
+                                break
+                        count = 1
+                    elif count == 1:
+                        break
+                    else:
+                        print('Second')
+                        ai_response = convo.send_message(f"The patient responded '{all_ans}' for the question: '{part_question[i]}. Please tell the patient what you meant by the question, and Please ask a follow-up question to clarify.")
+                        human_like_delay()
+                        print(f"AI Response: {ai_response.text.strip()}")
+                        response = input('Your Response: ').strip()
+                        new_hashmap[ai_response] = response
+                        human_like_delay()
+                            
+                        for ques, ans in new_hashmap.items():
+                            asking = convo.send_message(f"This is the answer; {ans} for the question: {ques}. write me a one answer that states the patient response for the question ")
+                            answers += asking.text.strip()
+                            
+                        final = convo.send_message(f"From these {answers}, write me a one answer that states the patient response for the question {part_question[i]}")
+                        all_ans = final.text.strip()
+                else:       
+                    print('Third')
                     table[part_question[i]] = all_ans
                     ask = convo.send_message(f"{part_question[i]} is the question, and {all_ans} is the answer for that question. Now I want you to understand that and create me a sentence of that.")
                     print(ask.text.strip())

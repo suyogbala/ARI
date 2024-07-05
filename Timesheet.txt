@@ -216,3 +216,6 @@ Wednesday - July 3
 Thrusday - July 4
 2 - 4 pm - checked the patient response with the code
 11 - 12 pm - made the confusion question of patient correctly
+
+Friday - July 5
+11:00 am - few changes in the prompt

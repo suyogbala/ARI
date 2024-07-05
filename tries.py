@@ -130,7 +130,7 @@ def gather_patient_info():
             response = input('Your Response: ').strip()
             human_like_delay()
             new_hashmap = {new: response}
-            asking = convo.send_message(f"This is the answer; {response} for the question: {part_question[i]}. write me a one answer that states the patient response for the question ")
+            asking = convo.send_message(f"This is the answer; {response} for the question: {part_question[i]}. write me a one answer that states the patient response for the question in a way that patient response is understandable according to the question. ")
             answers = asking.text.strip()
             all_ans = asking.text.strip()
             print(all_ans)

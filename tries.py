@@ -42,7 +42,7 @@ table = {}
 current_date = datetime.now().strftime("%Y-%m-%d")
 
 patient_info = [
-    "Admit Date:\nWhat date did you get admit at the hospital?",
+    "Admit Date:\nWhat date did you get admit at the hospital?, we need the date",
     "Date of Birth (DOB):\nWhen is your birthday?",
     "Nephrologist:\nWho is your kidney doctor?",
     "Frame Size:\nHow would you describe your body frame? How big you are? Depending on height and weight(Options: Small - 5 to 5.7 ft, Medium - 5.8 to 5.11 ft, Large - over 6 ft)",

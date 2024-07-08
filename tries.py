@@ -107,7 +107,7 @@ functional_capacity_ques = [
 all_questions = [patient_info, nutition_assessment_ques, medications_coverage_ques, dental_swallowing_ques, appetite_gi_assessment_ques, functional_capacity_ques]
 
 def is_unsure(response, question):
-    ask = convo.send_message(f"When the patient responded with '{response}' to the question '{question}', does this response: {response} indicate that the patient's doesn't remember the answer. Type 'yes' or 'no'.")
+    ask = convo.send_message(f"When the patient responded with '{response}' to the question '{question}', does this response: {response} indicate that the patient's doesn't know the answer. Type 'yes' or 'no'.")
     response = ask.text.strip()
     print(f"is_unsure: {response.lower()}")
     return "yes" in response.lower()
@@ -125,7 +125,7 @@ def gather_patient_info():
     for part_question in all_questions:
         i = 0
         while i < len(part_question):
-            new = convo.send_message(f"Please ask this question {part_question[i]} in a human way so that patient understands it in a friendly way.")
+            new = convo.send_message(f"Please ask this question {part_question[i]} in a human way so that patient understands it in a friendly way. Please just ask the question.")
             print(f'\nQuestion: {new.text.strip()}')
             response = input('Your Response: ').strip()
             human_like_delay()
@@ -137,41 +137,34 @@ def gather_patient_info():
             count = 0
             while True:
                 if not is_answer(all_ans, part_question[i]):
+                    followup_resp = all_ans
+                    followup_ques = part_question[i]
                     if is_unsure(all_ans, part_question[i]):
-                        print('First')
-                        prompt = f"""
-                            The patient seems unsure about their answer. The initial question was: "{part_question[i]}"
-                            The patient responded with: "{all_ans}"
-                            Please generate a few of the follow-up questions that human would ask to help the patient recall about the {part_question[i]}. 
-                            Provide only the questions, without any explanations or headers.
-                        """
-                        ai_response = convo.send_message(prompt)
-                        human_like_delay()
-                        questions = ai_response.text.strip().split('\n')
-                        cleaned_questions = [question.strip().lstrip("0123456789. ") for question in questions]
-                        cleaned_questions.append('After all these question, do you happen to recall the name of your dtoctor?')
-                        print(cleaned_questions)
-                        for ques in cleaned_questions:
-                            print(f'AI Response: {ques}')
-                            response = input('Your Response: ').strip()
-                            new_hashmap[ques] = response
+                        while True:
+                            print('First')
+                            prompt = f"""
+                                The patient seems unsure about their answer. The initial question was: "{part_question[i]}"
+                                The patient responded with: "{all_ans}"
+                                Please generate one follow-up questions that human would ask to help the patient recall about the {part_question[i]}. Consider that {followup_ques} are already asked, and the provided response are {followup_resp}.
+                                Provide only the questions, without any explanations or headers.
+                            """
+                            ai_response = convo.send_message(prompt)
+                            human_like_delay()
+                            questions = ai_response.text.strip()
+                            print(f"Followup_Ques: {questions}")
+                            response = input(f'Your Response: ').strip()
+                            new_hashmap[questions] = response
                             for ques, ans in new_hashmap.items():
                                 asking = convo.send_message(f"This is the answer; {ans} for the question: {ques}. write me a one answer that states the patient response for the question ")
                                 answers += asking.text.strip()
-                            
+                                
                             final = convo.send_message(f"From these {answers}, write me a one answer that states the patient response for the question {part_question[i]}")
                             all_ans = final.text.strip()
                             if is_unsure(all_ans, part_question[i]):
                                 continue
-                            else:
-                                break
-                        if count == 1:
-                            continue
-                        else:
                             table[part_question[i]] = all_ans
                             ask = convo.send_message(f"{part_question[i]} is the question, and {all_ans} is the answer for that question. Now I want you to understand that and create me a sentence of that.")
                             print(ask.text.strip())
-                            count = 2
                             break
 
                     else:
@@ -189,9 +182,6 @@ def gather_patient_info():
                             
                         final = convo.send_message(f"From these {answers}, write me a one answer that states the patient response for the question {part_question[i]}")
                         all_ans = final.text.strip()
-                
-                elif count == 2:
-                    break
 
                 else:       
                     print('Third')

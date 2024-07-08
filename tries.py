@@ -175,6 +175,7 @@ def gather_patient_info():
                                 ask = convo.send_message(f"{part_question[i]} is the question, and {all_ans} is the answer for that question. Now I want you to understand that and create me a sentence of that.")
                                 print(ask.text.strip())
                                 break
+                        break
 
                     else:
                         print('Second')

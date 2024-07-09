@@ -118,6 +118,18 @@ def is_answer(response, question):
     print(f"is_answer: {ai_response.lower()}")
     return "yes" in ai_response.lower()
 
+def generate_follow_up_question(initial_question, all_followup_ques, all_followup_ans):
+    prompt = f"""
+    The patient seems unsure about their answer to the initial question: "{initial_question}"
+    Here are the questions that have been asked so far: {all_followup_ques}
+    Here are the responses to those questions: {all_followup_ans}
+    Please generate one follow-up question that a human would ask to considering the {all_followup_ques} and {all_followup_ans} to help the patient recall the answer to the initial question: "{initial_question}". 
+    Provide only the follow-up question, without any explanations or headers.
+    """
+    ai_response = convo.send_message(prompt)
+    follow_up_question = ai_response.text.strip()
+    return follow_up_question
+
 def human_like_delay():
     time.sleep(random.uniform(1, 3)) 
 
@@ -137,41 +149,35 @@ def gather_patient_info():
             count = 0
             while True:
                 if not is_answer(all_ans, part_question[i]):
-                    followup_resp = all_ans
-                    followup_ques = part_question[i]
                     if is_unsure(all_ans, part_question[i]):
+                        followup_ques = []
+                        followup_resp = []
                         while True:
-                            all_followup_ques = convo.send_message(f"Combine all these questions into one: {followup_ques}")
-                            all_followup_ans = convo.send_message(f"Combine all these answers into one: {followup_resp}")
+                            combined_ques = convo.send_message(f"Combine all these questions into one: {followup_ques}")
+                            all_followup_ques = combined_ques.text.strip()
+                            combined_resp = convo.send_message(f"Combine all these answers into one: {followup_resp}")
+                            all_followup_ans = combined_resp.text.strip()
                             print('First')
-                            prom = f"""
-                                These are the questions that I have asked {all_followup_ques} that I have asked to get the answer from the patient.
-                                The patient response {all_followup_ans} to the {all_followup_ques}.
-                                The initial question was: {part_question[i]}. So, Do you think the patient might remember after few other questions.
-                                Type 'Yes' or 'No'
+                            check_recall = f"""
+                                These are the questions that have been asked: {all_followup_ques}
+                                These are the responses: {all_followup_ans}
+                                The initial question was: {part_question[i]}
+                                Do you think the patient might remember the answer after a few more questions? Type 'Yes' or 'No'
                                 """
-                            resp_for_prom = convo.send_message(prom)
-                            print(resp_for_prom.text.strip())
+                            resp_for_prom = convo.send_message(check_recall)
                             if 'yes' in resp_for_prom.text.strip().lower():
-                                prompt = f"""
-                                    The patient seems unsure about their answer. The initial question was: "{part_question[i]}"
-                                    The patient responded with: "{all_ans}"
-                                    Please generate one follow-up questions that human would ask to help the patient recall about the {part_question[i]}. Consider that {followup_ques} are already asked, and the provided response are {followup_resp}.
-                                    Provide only the questions, without any explanations or headers.
-                                """
-                                ai_response = convo.send_message(prompt)
-                                human_like_delay()
-                                questions = ai_response.text.strip()
-                                print(f"Followup_Ques: {questions}")
+                                follow_up_question = generate_follow_up_question(part_question[i], all_followup_ques, all_followup_ans)
+                                print(f"Follow-up Question: {follow_up_question}")
                                 response = input(f'Your Response: ').strip()
-                                followup_ques += questions
-                                followup_resp += response
-                                new_hashmap[questions] = response
+                                followup_ques.append(follow_up_question)
+                                followup_resp.append(response)
+                                new_hashmap[follow_up_question] = response    
+                                answers = ""
                                 for ques, ans in new_hashmap.items():
-                                    asking = convo.send_message(f"This is the answer; {ans} for the question: {ques}. write me a one answer that states the patient response for the question ")
+                                    asking = convo.send_message(f"This is the answer: '{ans}' for the question: '{ques}'. Write me a one-sentence answer that states the patient's response for the question.")
                                     answers += asking.text.strip()
-                                    
-                                final = convo.send_message(f"From these {answers}, write me a one answer that states the patient response for the question {part_question[i]}")
+                                        
+                                final = convo.send_message(f"From these responses: {answers}, write me a one-sentence answer that states the patient's response for the question: '{part_question[i]}'")
                                 all_ans = final.text.strip()
                                 if is_unsure(all_ans, part_question[i]):
                                     continue

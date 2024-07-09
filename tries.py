@@ -104,7 +104,6 @@ functional_capacity_ques = [
     "Functional Capacity:\nHow would you describe your ability to perform daily activities?\n☐ Fully functional\n☐ Some loss of stamina\n☐ Severe"
 ]
 
-
 all_questions = [patient_info, nutition_assessment_ques, medications_coverage_ques, dental_swallowing_ques, appetite_gi_assessment_ques, functional_capacity_ques]
 
 def is_unsure(response, question):
@@ -114,12 +113,18 @@ def is_unsure(response, question):
     return "yes" in ai_response.lower()
 
 def convert_answer(response, question):
-    ask = convo.send_message(f"The patient responded {response} to the question {question}. Please convert the patient's response according to what the question wants. Your knowledge is {current_date}")
-    print(ask.text.strip())
-    return ask.text.strip()
+    ask = convo.send_message(f"The patient responded {response} to the question {question}. Please generate one line patient's response according to what the question wants. Consider today's date is {current_date}")
+    ai_response = ask.text.strip()
+    return ai_response
 
 def is_answer(response, question):
-    ask = convo.send_message(f"Does the response '{response}' provide the answer we needed for the question '{question}'? Todays date is {current_date}. Please answer 'yes' or 'no'.")
+    prompt = f"""
+    The patient was asked the question: "{question}"
+    The patient responded with: "{response}"
+    Please determine if the response "{response}" is appropriate for the question: "{question}". 
+    Does the response "{response}" provide the necessary information for the question "{question}"? Type 'yes' or 'no'.
+    """
+    ask = convo.send_message(prompt)
     ai_response = ask.text.strip()
     print(f"is_answer: {ai_response.lower()}")
     return "yes" in ai_response.lower()
@@ -127,10 +132,11 @@ def is_answer(response, question):
 def generate_follow_up_question(initial_question, all_followup_ques, all_followup_ans):
     prompt = f"""
     The patient seems unsure about their answer to the initial question: "{initial_question}"
-    Here are the questions that have been asked so far: {all_followup_ques}
-    Here are the responses to those questions: {all_followup_ans}
-    Please generate one follow-up question that a human would ask to considering the {all_followup_ques} and {all_followup_ans} to help the patient recall the answer to the initial question: "{initial_question}". 
-    Provide only the follow-up question, without any explanations or headers.
+    Here are the questions that have been asked so far: {' '.join(all_followup_ques)}
+    Here are the responses to those questions: {' '.join(all_followup_ans)}
+    Considering the {' '.join(all_followup_ans)}, Please generate one casual follow-up questions that a human would ask to help the patient recall their answer to the initial question: "{initial_question}".
+    Keep the questions light and casual. If the patient still doesn't remember, we can always check the file and skip the question.
+    Provide only the questions, without any explanations or headers.
     """
     ai_response = convo.send_message(prompt)
     follow_up_question = ai_response.text.strip()
@@ -150,28 +156,22 @@ def gather_patient_info():
             new_hashmap = {new: response}
             answers = convert_answer(response, part_question[i])
             all_ans = convert_answer(response, part_question[i])
-            print(all_ans)
-            count = 0
             while True:
                 if not is_answer(all_ans, part_question[i]):
                     if is_unsure(all_ans, part_question[i]):
                         followup_ques = []
                         followup_resp = []
                         while True:
-                            combined_ques = convo.send_message(f"Combine all these questions into one: {followup_ques}")
-                            all_followup_ques = combined_ques.text.strip()
-                            combined_resp = convo.send_message(f"Combine all these answers into one: {followup_resp}")
-                            all_followup_ans = combined_resp.text.strip()
                             print('First')
                             check_recall = f"""
-                                These are the questions that have been asked: {all_followup_ques}
-                                These are the responses: {all_followup_ans}
+                                These are the questions that have been asked: {' '.join(followup_ques)}
+                                These are the responses: {' '.join(followup_resp)}
                                 The initial question was: {part_question[i]}
                                 Do you think the patient might remember the answer after a few followup questions? Type 'Yes' or 'No'
                                 """
                             resp_for_prom = convo.send_message(check_recall)
                             if 'yes' in resp_for_prom.text.strip().lower():
-                                follow_up_question = generate_follow_up_question(part_question[i], all_followup_ques, all_followup_ans)
+                                follow_up_question = generate_follow_up_question(part_question[i], followup_ques, followup_resp)
                                 print(f"Follow-up Question: {follow_up_question}")
                                 response = input(f'Your Response: ').strip()
                                 followup_ques.append(follow_up_question)
@@ -187,14 +187,16 @@ def gather_patient_info():
                                 if is_unsure(all_ans, part_question[i]):
                                     continue
                                 else:
-
+                                    print('pat remember')
+                                    table[part_question[i]] = all_ans
+                                    ask = convo.send_message(f"{part_question[i]} is the question, and {all_ans} is the answer for that question. Now I want you to understand that and create me a sentence of that.")
+                                    print(ask.text.strip())
                                     break
                             else:
+                                print('pat dont rem')
                                 table[part_question[i]] = "Patient doesn't remember the answer, should look at time file."
-                                ask = convo.send_message(f"{part_question[i]} is the question, and {all_ans} is the answer for that question. Now I want you to understand that and create me a sentence of that.")
-                                print(ask.text.strip())
                                 break
-
+                        break
                     else:
                         print('Second')
                         ai_response = convo.send_message(f"The patient responded '{all_ans}' for the question: '{part_question[i]}. Please tell the patient what you meant by the question, and Please ask a follow-up question to clarify.")

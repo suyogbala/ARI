@@ -1,7 +1,7 @@
 import google.generativeai as genai
 import time
 import random
-from datetime import datetime
+from datetime import date
 
 genai.configure(api_key="AIzaSyBSV0XbpWUbxE0qmrTxZlqd1o2VJKpWfYA")
 
@@ -39,7 +39,7 @@ convo = model.start_chat(history=[])
 
 responses = []
 table = {}
-current_date = datetime.now().strftime("%Y-%m-%d")
+current_date = date.today()
 
 patient_info = [
     "Admit Date:\nWhat date did you get admit at the hospital?, we need the date",
@@ -104,6 +104,7 @@ functional_capacity_ques = [
     "Functional Capacity:\nHow would you describe your ability to perform daily activities?\n☐ Fully functional\n☐ Some loss of stamina\n☐ Severe"
 ]
 
+
 all_questions = [patient_info, nutition_assessment_ques, medications_coverage_ques, dental_swallowing_ques, appetite_gi_assessment_ques, functional_capacity_ques]
 
 def is_unsure(response, question):
@@ -112,8 +113,13 @@ def is_unsure(response, question):
     print(f"is_unsure: {ai_response.lower()}")
     return "yes" in ai_response.lower()
 
+def convert_answer(response, question):
+    ask = convo.send_message(f"The patient responded {response} to the question {question}. Please convert the patient's response according to what the question wants. Your knowledge is {current_date}")
+    print(ask.text.strip())
+    return ask.text.strip()
+
 def is_answer(response, question):
-    ask = convo.send_message(f"Does the response '{response}' provide the answer we needed for the question '{question}'? Please answer 'yes' or 'no'.")
+    ask = convo.send_message(f"Does the response '{response}' provide the answer we needed for the question '{question}'? Todays date is {current_date}. Please answer 'yes' or 'no'.")
     ai_response = ask.text.strip()
     print(f"is_answer: {ai_response.lower()}")
     return "yes" in ai_response.lower()
@@ -142,9 +148,8 @@ def gather_patient_info():
             response = input('Your Response: ').strip()
             human_like_delay()
             new_hashmap = {new: response}
-            asking = convo.send_message(f"This is the answer; {response} for the question: {part_question[i]}. write me a one answer that states the patient response for the question in a way that patient response is understandable according to the question. ")
-            answers = asking.text.strip()
-            all_ans = asking.text.strip()
+            answers = convert_answer(response, part_question[i])
+            all_ans = convert_answer(response, part_question[i])
             print(all_ans)
             count = 0
             while True:
@@ -162,7 +167,7 @@ def gather_patient_info():
                                 These are the questions that have been asked: {all_followup_ques}
                                 These are the responses: {all_followup_ans}
                                 The initial question was: {part_question[i]}
-                                Do you think the patient might remember the answer after a few more questions? Type 'Yes' or 'No'
+                                Do you think the patient might remember the answer after a few followup questions? Type 'Yes' or 'No'
                                 """
                             resp_for_prom = convo.send_message(check_recall)
                             if 'yes' in resp_for_prom.text.strip().lower():
@@ -181,12 +186,14 @@ def gather_patient_info():
                                 all_ans = final.text.strip()
                                 if is_unsure(all_ans, part_question[i]):
                                     continue
+                                else:
+
+                                    break
                             else:
                                 table[part_question[i]] = "Patient doesn't remember the answer, should look at time file."
                                 ask = convo.send_message(f"{part_question[i]} is the question, and {all_ans} is the answer for that question. Now I want you to understand that and create me a sentence of that.")
                                 print(ask.text.strip())
                                 break
-                        break
 
                     else:
                         print('Second')

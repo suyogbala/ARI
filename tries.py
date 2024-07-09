@@ -104,7 +104,7 @@ functional_capacity_ques = [
     "Functional Capacity:\nHow would you describe your ability to perform daily activities?\n☐ Fully functional\n☐ Some loss of stamina\n☐ Severe"
 ]
 
-all_questions = [patient_info, nutition_assessment_ques, medications_coverage_ques, dental_swallowing_ques, appetite_gi_assessment_ques, functional_capacity_ques]
+all_questions = [patient_info]
 
 def is_unsure(response, question):
     ask = convo.send_message(f"The patient responded with '{response}' to the question '{question}'. Does this response indicate that the patient is unsure or doesn't remember the answer? Type 'yes' or 'no'.")
@@ -113,8 +113,9 @@ def is_unsure(response, question):
     return "yes" in ai_response.lower()
 
 def convert_answer(response, question):
-    ask = convo.send_message(f"The patient responded {response} to the question {question}. Please generate one line patient's response according to what the question wants. Consider today's date is {current_date}")
+    ask = convo.send_message(f"The patient responded {response} to the question {question}. Please generate one line patient's response according to what the question wants.")
     ai_response = ask.text.strip()
+    print(ai_response)
     return ai_response
 
 def is_answer(response, question):
@@ -233,3 +234,4 @@ def summary(table):
     final_summary = convo.send_message(f"Use the information {sentence} provided to tailor and adjust a patient dialysis treatment to suite their specific needs")
     print(final_summary)
 gather_patient_info()
+summary(table)

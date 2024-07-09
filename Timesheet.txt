@@ -231,3 +231,4 @@ Monday - July 8
 12:00 pm - trying with the response
 01:00 pm - trying the responses with the prompt
 02:00 pm - stoping the followup ques when no more question is needed
+03:00 pm - making prompt better

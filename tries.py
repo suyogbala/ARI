@@ -113,7 +113,7 @@ def is_unsure(response, question):
     return "yes" in ai_response.lower()
 
 def is_answer(response, question):
-    ask = convo.send_message(f"Does the response '{response}' provide a complete and clear answer to the question '{question}'? Please answer 'yes' or 'no'.")
+    ask = convo.send_message(f"Does the response '{response}' provide the answer we needed for the question '{question}'? Please answer 'yes' or 'no'.")
     ai_response = ask.text.strip()
     print(f"is_answer: {ai_response.lower()}")
     return "yes" in ai_response.lower()
@@ -141,10 +141,13 @@ def gather_patient_info():
                     followup_ques = part_question[i]
                     if is_unsure(all_ans, part_question[i]):
                         while True:
+                            all_followup_ques = convo.send_message(f"Combine all these questions into one: {followup_ques}")
+                            all_followup_ans = convo.send_message(f"Combine all these answers into one: {followup_resp}")
                             print('First')
                             prom = f"""
-                                These are the questions that I have asked {followup_ques} that I have asked to get the answer from the patient.
-                                The initial question was: {part_question[i]}. So, Do you think There is any questions left that I have to ask?
+                                These are the questions that I have asked {all_followup_ques} that I have asked to get the answer from the patient.
+                                The patient response {all_followup_ans} to the {all_followup_ques}.
+                                The initial question was: {part_question[i]}. So, Do you think the patient might remember after few other questions.
                                 Type 'Yes' or 'No'
                                 """
                             resp_for_prom = convo.send_message(prom)
@@ -161,6 +164,8 @@ def gather_patient_info():
                                 questions = ai_response.text.strip()
                                 print(f"Followup_Ques: {questions}")
                                 response = input(f'Your Response: ').strip()
+                                followup_ques += questions
+                                followup_resp += response
                                 new_hashmap[questions] = response
                                 for ques, ans in new_hashmap.items():
                                     asking = convo.send_message(f"This is the answer; {ans} for the question: {ques}. write me a one answer that states the patient response for the question ")
@@ -171,7 +176,7 @@ def gather_patient_info():
                                 if is_unsure(all_ans, part_question[i]):
                                     continue
                             else:
-                                table[part_question[i]] = all_ans
+                                table[part_question[i]] = "Patient doesn't remember the answer, should look at time file."
                                 ask = convo.send_message(f"{part_question[i]} is the question, and {all_ans} is the answer for that question. Now I want you to understand that and create me a sentence of that.")
                                 print(ask.text.strip())
                                 break
@@ -205,6 +210,7 @@ def gather_patient_info():
 def summary(table):
     all_answers = ''
     for question, answer in table.items():
+        print(question, answer)
         ask = convo.send_message(f"{question} is the question, and {answer} is the answer for that question. Now I want you to understand that and create me a sentence of that.")
         sentence = ask.text.strip()
         all_answers += sentence

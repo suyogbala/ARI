@@ -241,3 +241,4 @@ Tuesday - July 9
 12:00 pm - meeting with javaun and tried the responses
 01:00 pm - meeting
 02:00 pm - trying the response 
+03:00 pm - trying better prompt for the AI

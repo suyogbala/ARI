@@ -135,7 +135,8 @@ def generate_follow_up_question(initial_question, all_followup_ques, all_followu
     The patient seems unsure about their answer to the initial question: "{initial_question}"
     Here are the questions that have been asked so far: {' '.join(all_followup_ques)}
     Here are the responses to those questions: {' '.join(all_followup_ans)}
-    Considering the {' '.join(all_followup_ans)}, Please generate one casual follow-up questions that a human would ask to help the patient recall their answer to the initial question: "{initial_question}".
+    Considering the {' '.join(all_followup_ans)}, Please generate one casual follow-up questions that helps the patient recall their answer to the initial question: "{initial_question}".
+    Please ask the logical question that human would ask.
     Keep the questions light and casual. If the patient still doesn't remember, we can always check the file and skip the question.
     Provide only the questions, without any explanations or headers.
     """

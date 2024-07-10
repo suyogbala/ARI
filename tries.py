@@ -232,6 +232,6 @@ def summary(table):
         all_answers += sentence
     
     final_summary = convo.send_message(f"Use the information {sentence} provided to tailor and adjust a patient dialysis treatment to suite their specific needs")
-    print(final_summary)
+    print(final_summary.text.strip())
 gather_patient_info()
 summary(table)

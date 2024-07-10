@@ -132,13 +132,11 @@ def is_answer(response, question):
 
 def generate_follow_up_question(initial_question, all_followup_ques, all_followup_ans):
     prompt = f"""
-    The patient seems unsure about their answer to the initial question: "{initial_question}"
-    Here are the questions that have been asked so far: {' '.join(all_followup_ques)}
-    Here are the responses to those questions: {' '.join(all_followup_ans)}
-    Considering the {' '.join(all_followup_ans)}, Please generate one casual follow-up questions that helps the patient recall their answer to the initial question: "{initial_question}".
-    Please ask the logical question that human would ask.
-    Keep the questions light and casual. If the patient still doesn't remember, we can always check the file and skip the question.
-    Provide only the questions, without any explanations or headers.
+    The patient seems unsure about their answer to the initial question: "{initial_question}".
+    Here are the questions that have been asked so far: {' '.join(all_followup_ques)}.
+    Here are the responses to those questions: {' '.join(all_followup_ans)}.
+    Considering the {' '.join(all_followup_ans)}, and the {' '.join(all_followup_ques)}, Please generate one casual follow-up questions that helps the patient recall their answer to the initial question: "{initial_question}".
+    Please ask the logical question that human would ask, and add some expression according to their last response.
     """
     ai_response = convo.send_message(prompt)
     follow_up_question = ai_response.text.strip()
@@ -149,9 +147,9 @@ def human_like_delay():
 
 def gather_patient_info():
     for part_question in all_questions:
-        i = 0
+        i = 2
         while i < len(part_question):
-            new = convo.send_message(f"Please ask this question {part_question[i]} in a human way so that patient understands it in a friendly way. Please just ask the question.")
+            new = convo.send_message(f"Please ask this question {part_question[i]} in a human way so that patient understands it in a friendly way. Please just ask the question, and add one human expression in the beginning.")
             print(f'\nQuestion: {new.text.strip()}')
             response = input('Your Response: ').strip()
             human_like_delay()
@@ -166,9 +164,10 @@ def gather_patient_info():
                         while True:
                             print('First')
                             check_recall = f"""
-                                These are the questions that have been asked: {' '.join(followup_ques)}
-                                These are the responses: {' '.join(followup_resp)}
-                                The initial question was: {part_question[i]}
+                                These are the questions that have been asked: {' '.join(followup_ques)}.
+                                These are the responses: {' '.join(followup_resp)}.
+                                The initial question was: {part_question[i]}.
+                                Keep the questions light and casual. If the patient still doesn't remember, we can always check the file and skip the question.
                                 Do you think the patient might remember the answer after a few followup questions? Type 'Yes' or 'No'
                                 """
                             resp_for_prom = convo.send_message(check_recall)
@@ -186,6 +185,7 @@ def gather_patient_info():
                                         
                                 final = convo.send_message(f"From these responses: {answers}, write me a one-sentence answer that states the patient's response for the question: '{part_question[i]}'")
                                 all_ans = final.text.strip()
+                                print(f"all_ans:  {all_ans}")
                                 if is_unsure(all_ans, part_question[i]):
                                     continue
                                 else:

@@ -259,3 +259,4 @@ Thrusday - July 11
 11:00 am - responses with the prompt
 12:00 pm - meetings
 01:00 pm - working on the code
+02:00 pm - adding exceptional error

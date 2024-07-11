@@ -47,12 +47,12 @@ patient_info = [
     "Nephrologist:\nWho is your kidney doctor?",
     "Frame Size:\nHow would you describe your body frame? How big you are? Depending on height and weight(Options: Small - 5 to 5.7 ft, Medium - 5.8 to 5.11 ft, Large - over 6 ft)",
     "Height:\nHow tall are you?",
-    "Weight Assessment:\nSince your last visit, has your weight increased, decreased, or stayed the same? (Options: Increased, Decreased, Stayed the same)",
+    "Current Weight:\nWhat is your current weight?",
     "Target Weight (TW):\nWhat is your target weight according to your doctor?",
+    "Weight Assessment:\nSince your last visit, has your weight increased, decreased, or stayed the same? (Options: Increased, Decreased, Stayed the same)",
 ]
 
 nutition_assessment_ques = [
-    "Current Weight:\nWhat is your current weight?",
     "Standard Body Weight Index (SBWI):\nDo you know your standard body weight index?",
     "Dietitian:\nDo you have a dietitian? If yes, what's their name?",
     "Amputee:\nHave you had any amputations?\n☐ Yes\n☐ No\nIf yes, what is your adjusted body weight?",
@@ -147,7 +147,7 @@ def human_like_delay():
 
 def gather_patient_info():
     for part_question in all_questions:
-        i = 2
+        i = 0
         while i < len(part_question):
             new = convo.send_message(f"Please ask this question {part_question[i]} in a human way so that patient understands it in a friendly way. Please just ask the question, and add one human expression in the beginning.")
             print(f'\nQuestion: {new.text.strip()}')

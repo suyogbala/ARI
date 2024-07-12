@@ -195,6 +195,8 @@ def gather_patient_info():
                                     print(ask.text.strip())
                                     break
                             else:
+                                print(f"Alright after these questions, do you happen to remember the answer?")
+                                response = input(f'Your response: ')
                                 print('pat dont rem')
                                 table[part_question[i]] = "Patient doesn't remember the answer, should look at time file."
                                 break

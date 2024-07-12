@@ -260,3 +260,4 @@ Thrusday - July 11
 12:00 pm - meetings
 01:00 pm - working on the code
 02:00 pm - adding exceptional error
+03:00 pm - working on the errors

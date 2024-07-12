@@ -197,9 +197,18 @@ def gather_patient_info():
                             else:
                                 print(f"Alright after these questions, do you happen to remember the answer?")
                                 response = input(f'Your response: ')
-                                print('pat dont rem')
-                                table[part_question[i]] = "Patient doesn't remember the answer, should look at time file."
-                                break
+                                all_ans += response
+                                if is_unsure(all_ans, part_question[i]):
+                                    print('pat dont rem')
+                                    table[part_question[i]] = "Patient doesn't remember the answer, should look at time file."
+                                    break
+                                else:
+                                    print('pat remember')
+                                    table[part_question[i]] = all_ans
+                                    ask = convo.send_message(f"{part_question[i]} is the question, and {all_ans} is the answer for that question. Now I want you to understand that and create me a sentence of that.")
+                                    print(ask.text.strip())
+                                    break
+
                         break
                     else:
                         print('Second')

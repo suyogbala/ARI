@@ -2,6 +2,7 @@ import google.generativeai as genai
 import time
 import random
 from datetime import date
+from google.generativeai.types.generation_types import StopCandidateException
 
 genai.configure(api_key="AIzaSyBSV0XbpWUbxE0qmrTxZlqd1o2VJKpWfYA")
 
@@ -42,7 +43,7 @@ table = {}
 current_date = date.today()
 
 patient_info = [
-    "Admit Date:\nWhat date did you get admit at the hospital?, we need the date",
+    f"Admit Date:\nWhat date did you get admit at the hospital?, we need the date, Todays data is {current_date}",
     "Date of Birth (DOB):\nWhen is your birthday?",
     "Nephrologist:\nWho is your kidney doctor?",
     "Frame Size:\nHow would you describe your body frame? How big you are? Depending on height and weight(Options: Small - 5 to 5.7 ft, Medium - 5.8 to 5.11 ft, Large - over 6 ft)",
@@ -149,8 +150,11 @@ def gather_patient_info():
     for part_question in all_questions:
         i = 0
         while i < len(part_question):
-            new = convo.send_message(f"Please ask this question {part_question[i]} in a human way so that patient understands it in a friendly way. Please just ask the question, and add one human expression in the beginning.")
-            print(f'\nQuestion: {new.text.strip()}')
+            try:
+                new = convo.send_message(f"Please ask this question {part_question[i]} in a human way so that patient understands it in a friendly way. Please just ask the question, and add one human expression in the beginning. Also list the options if there are any in the {part_question[i]}")
+                print(f'\nQuestion: {new.text.strip()}')
+            except StopCandidateException as e:
+                print(f"Question: {part_question[i]}")
             response = input('Your Response: ').strip()
             human_like_delay()
             new_hashmap = {new: response}
@@ -195,7 +199,7 @@ def gather_patient_info():
                                     print(ask.text.strip())
                                     break
                             else:
-                                print(f"Alright after these questions, do you happen to remember the answer?")
+                                print(f"Question: So, after these questions, do you happen to remember the answer?")
                                 response = input(f'Your response: ')
                                 all_ans += response
                                 if is_unsure(all_ans, part_question[i]):

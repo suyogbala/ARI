@@ -277,4 +277,7 @@ Friday - july 12
 
 Wednesday - July 17
 11:00 - trying responses with the questions
-12:00 - trying resp
+12:00 - trying response
+01:00 - learning javascript
+02:00 - learning javascript
+03:00 - learning javascript

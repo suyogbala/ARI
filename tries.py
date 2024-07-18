@@ -105,7 +105,7 @@ functional_capacity_ques = [
     "Functional Capacity:\nHow would you describe your ability to perform daily activities?\n☐ Fully functional\n☐ Some loss of stamina\n☐ Severe"
 ]
 
-all_questions = [patient_info, nutition_assessment_ques, medications_coverage_ques, dental_swallowing_ques, appetite_gi_assessment_ques, functional_capacity_ques]
+all_questions = [functional_capacity_ques]
 
 def is_unsure(response, question):
     ask = convo.send_message(f"The patient responded with '{response}' to the question '{question}'. Does this response indicate that the patient is unsure or doesn't remember the answer? Type 'yes' or 'no'.")

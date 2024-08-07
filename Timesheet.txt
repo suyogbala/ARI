@@ -199,10 +199,10 @@ Monday - July 1
 03:00 pm - working on the response
 04:00 pm - learining full stack
 05:00 pm - learining full stack
-06:00 pm = working on the prompt
+08:00 pm = working on the prompt
 
 Tuesday - July 2
-5:00 pm - tried new things, prompts
+11:00 - 7:00 - tried new things, prompts
 
 Wednesday - July 3
 11:00 am - learning flask
@@ -211,11 +211,12 @@ Wednesday - July 3
 02:00 pm - added function that checks if the patient doesn't remember anything
 03:00 pm - trying with the response
 04:00 pm - working on the prompt
-05:00 pm - working to handle the unclear question
+06:00 pm - working to handle the unclear question
 
 Thrusday - July 4
-2 - 4 pm - checked the patient response with the code
-11 - 12 pm - made the confusion question of patient correctly
+11:00 - tried new prompt
+12 - 4 pm - checked the patient response with the code
+4 - 6 pm - made the confusion question of patient correctly
 
 Friday - July 5
 11:00 am - few changes in the prompt
@@ -224,7 +225,7 @@ Friday - July 5
 02:00 pm - trying the different responses
 03:00 pm - working one the followup ques
 04:00 pm - working on the prompt
-05:00 pm - working on the follow up questions and the prompt
+06:00 pm - working on the follow up questions and the prompt
 
 Monday - July 8
 11:00 am - working on the prompt for the response
@@ -234,7 +235,7 @@ Monday - July 8
 03:00 pm - making prompt better
 04:00 pm - trying with the responses
 05:00 pm - checking the responses
-06:00 pm - patient response and question 
+08:00 pm - patient response and question 
 
 Tuesday - July 9
 11:00 am - tried some responses
@@ -243,7 +244,7 @@ Tuesday - July 9
 02:00 pm - trying the response 
 03:00 pm - trying better prompt for the AI
 04:00 pm - prompt and response
-05:00 pm - prompting and trying the different response
+07:00 pm - prompting and trying the different response
 
 Wednesday - July 10
 11:00 am - working with the responses 
@@ -263,7 +264,7 @@ Thrusday - July 11
 03:00 pm - working on the errors
 04:00 pm - trying the responses
 05:00 pm - working on the code
-06:00 pm - running through the code
+09:00 pm - running through the code
 
 Friday - july 12
 11:00 am - working on adding the followup questions
@@ -282,8 +283,124 @@ Wednesday - July 17
 02:00 - learning javascript
 03:00 - learning javascript
 04:00 - trying response
-05:00 - trying new prompts
+06:00 - trying new prompts
 
 Thrusday - July 18
 11:00 - trying prompt
 12:00 - meeting
+01:00 - trying responses
+02:00 - trying response
+03:00 pm - working on the errors
+04:00 pm - trying the responses
+05:00 pm - working on the code
+09:00 pm - running through the code
+
+Friday - July 19
+11:00 am - working on the prompt for the response
+12:00 pm - trying with the response
+01:00 pm - trying the responses with the prompt
+02:00 pm - testing response
+03:00 pm - making prompt better
+04:00 pm - trying with the responses
+05:00 pm - checking the responses
+06:00 pm - patient response and question 
+
+Monday - July 22
+11:00 am - working on the prompt for the response
+12:00 pm - trying with the response
+01:00 pm - trying the Response
+02:00 pm - testing response
+03:00 pm - making prompt better
+04:00 pm - trying with the responses
+05:00 pm - making pormpt better
+07:00 pm - patient response and question, and the prompt
+
+Tuesday - July 23
+11:00 am - working on the prompt
+12:00 pm - trying with the response
+01:00 pm - meeting
+02:00 pm - testing response
+03:00 pm - making prompt better
+04:00 pm - trying with the responses
+05:00 pm - checking the responses
+07:00 pm - Testing the ques with diff prompts
+
+Wednesday - July 24
+11:00 am - working on the prompt
+12:00 pm - trying with the response
+01:00 pm - trying the responses
+02:00 pm - making prompt better
+03:00 pm - testing response
+04:00 pm - trying with the responses
+05:00 pm - checking the responses
+06:00 pm - testing response
+
+Thrusday - July 25
+11:00 am - testing resp
+12:00 pm - trying with the response
+01:00 pm - trying the responses with the prompt
+02:00 pm - testing response
+03:00 pm - giving AI more followup ques
+04:00 pm - trying with the responses
+05:00 pm - utilizing time
+9:00 pm - utilizing time
+
+Friday - July 26
+11:00 am - giving explict question so patient understand
+12:00 pm - trying with the response
+01:00 pm - trying the responses 
+02:00 pm - testing response
+03:00 pm - calculating time
+04:00 pm - end when time is finished
+05:00 pm - checking the responses
+06:00 pm - trying new prompts
+
+Monday - July 29
+11:00 am - working on the prompt
+12:00 pm - trying with the response
+01:00 pm - calculating the time
+02:00 pm - testing response
+03:00 pm - making prompt better
+04:00 pm - checking the time and important ques
+05:00 pm - checking the responses
+07:00 pm - patient response and important question 
+
+Tuesday - July 30
+11:00 am - asking important questions first
+12:00 pm - trying with the response
+01:00 pm - qyestions acc to time
+02:00 pm - working on the other issues options, and medication problem
+03:00 pm - working on the other issues options, and medication problem
+04:00 pm - working on the other issues options, and medication problem
+05:00 pm - asking important question with the time
+07:00 pm - on the code
+
+Wedbesday - July 31
+11:00 am - working on the prompt
+12:00 pm - trying with the response
+01:00 pm - meeting
+02:00 pm - testing time
+03:00 pm - making prompt better
+04:00 pm - checking the time and important ques
+05:00 pm - checking the responses
+06:00 pm - trying resp on the prompt
+
+Thrusday - Aug 1
+11:00 am - working on the prompt
+12:00 pm - testing newer prompt 
+01:00 pm - testing response
+02:00 pm - making error better
+03:00 pm - making prompt better
+04:00 pm - making the list of options for answer
+05:00 pm - checking the what answer should be like
+09:00 pm - checking the what answer should be like
+
+Friday - Aug 2
+11:00 am - working on the new function
+12:00 pm - working on the prompt
+01:00 pm - meeting
+02:00 pm - connecting answers should be and the patient answer
+03:00 pm - making prompt better
+04:00 pm - working on the prompt
+05:00 pm - checking time and going through questions
+06:00 pm - checking time and going through questions
